@@ -1,6 +1,6 @@
 import React from 'react'
-import ConvertForm from '../components/ConvertForm/ConvertForm'
+import Dashboard from '../components/Dashboard'
 
 export default () => {
-  return <ConvertForm />
+  return <Dashboard />
 }

@@ -8,6 +8,7 @@ import { shortenAddress } from 'lib/web3-utils'
 
 import frame from './provider-icons/frame.svg'
 import metamask from './provider-icons/metamask.svg'
+import colors from '../../utils/colors'
 import lightning from './lightning.svg'
 
 function AccountModule() {
@@ -29,17 +30,13 @@ function DisconnectedMode() {
       ref={containerRef}
       css={`
         position: relative;
-        width: 179px;
+        width: 159px;
         height: 40px;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(223, 227, 232, 0.75);
-        box-sizing: border-box;
-        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-        &:active {
-          top: 1px;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        border: 2px solid #d2f67b;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        background: transparent !important;
       `}
     >
       <OverlayTrigger
@@ -101,21 +98,13 @@ function DisconnectedMode() {
       >
         <div
           css={`
-            margin-top: 4px;
             font-size: 16px;
             font-weight: medium;
             background: transparent;
+            color: ${colors.primary};
           `}
         >
-          <img
-            src={lightning}
-            alt=""
-            css={`
-              margin-right: 12px;
-              margin-bottom: 4px;
-            `}
-          />
-          Enable Account
+          Connect Wallet
         </div>
       </OverlayTrigger>
     </ButtonBase>
