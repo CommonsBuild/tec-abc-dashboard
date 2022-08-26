@@ -220,13 +220,15 @@ const InputContainer = styled.div`
     line-height: 118%;
     text-align: center;
     color: #ffffff;
-    padding: 12px 0 0 6px;
+    padding: 14px 0 0 6px;
   }
-  input {
-    border: 1.33204px solid #60d0da;
+  input[type='checkbox'] {
+    display: block;
+    outline: none;
     border-radius: 1.33204px;
-    background: transparent;
+    accent-color: #60d0da;
     box-sizing: border-box;
+    cursor: pointer;
   }
   a {
     color: #60d0da !important;
