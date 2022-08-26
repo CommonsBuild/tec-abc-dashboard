@@ -1,7 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
+import { collateral, bonded } from '../../config'
 
 function MainCards() {
+  const mainToken = bonded.symbol
+  const collateralToken = collateral.symbol
+
   const Card = ({ title, content, extraContent, icon, currency }) => {
     return (
       <CardContainer>
@@ -40,19 +44,19 @@ function MainCards() {
         content="100"
         extraContent={'100'}
         icon="/icons/pool.svg"
-        currency={'TEC'}
+        currency={mainToken}
       />
       <Card
         title="RESERVE"
         content="100"
         icon="/icons/reserve.svg"
-        currency={'wxDAI'}
+        currency={collateralToken}
       />
       <Card
         title="COMMON POOL"
         content="100"
         icon="/icons/supply.svg"
-        currency={'wxDAI'}
+        currency={collateralToken}
       />
     </div>
   )
