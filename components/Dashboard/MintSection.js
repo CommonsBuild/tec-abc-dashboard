@@ -28,7 +28,7 @@ function MintSection() {
             background: ${secondary};
           `}
         >
-          <p>{amount}</p>
+          <input type="number" value={amount} />
         </div>
       </AmountContainer>
     )
@@ -73,13 +73,13 @@ function MintSection() {
           token={collateralToken}
           primary="#393741"
           secondary="#00707A"
-          amount="0.00"
+          amount={0}
         />
         <Amount
           token={mainToken}
           primary="#0E684C"
           secondary="#137556"
-          amount="0.00"
+          amount={0}
         />
         <Button
           css={`
@@ -108,7 +108,17 @@ function MintSection() {
         </InputContainer>
       </Left>
       <Right>
-        <Image src="/images/flowchart.svg" width="511px" height="385px" />
+        <Image src="/images/flowchart.svg" width="511px" height="320px" />
+        <ChartValues>
+          <PoolValue>
+            <p>0.000</p>
+            <p>WXDAI</p>
+          </PoolValue>
+          <PoolValue>
+            <p>0.000</p>
+            <p>WXDAI</p>
+          </PoolValue>
+        </ChartValues>
       </Right>
     </div>
   )
@@ -118,6 +128,7 @@ const Left = styled.div`
   display: flex;
   flex-direction: column;
   flex: 0.3;
+  max-width: 419px;
   background: #191919;
   border-radius: 11px;
   padding: 14px;
@@ -125,8 +136,10 @@ const Left = styled.div`
 const Right = styled.div`
   display: flex;
   flex: 0.7;
+  max-width: 777px;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background: white;
   background: #191919;
   border-radius: 11px;
 `
@@ -175,7 +188,22 @@ const AmountContainer = styled.div`
     border-radius: 10.466px 0px 0px 10.466px;
   }
   div:nth-child(2) {
+    display: flex;
+    justify-content: flex-start;
     border-radius: 0px 10.466px 10.466px 0px;
+    input {
+      background: transparent;
+      border: none;
+      font-size: 34.2524px;
+      color: white;
+      width: 200px;
+      margin: 0 0 0 20px;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
   div {
     display: flex;
@@ -238,6 +266,34 @@ const InputContainer = styled.div`
     color: #60d0da !important;
     cursor: pointer;
     text-decoration: underline #60d0da !important;
+  }
+`
+
+const ChartValues = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: white;
+  width: 511px;
+  margin: -20px 0;
+  padding: 0 55px 0 60px;
+`
+
+const PoolValue = styled.div`
+  display: flex;
+  flex-direction: column;
+  p:first-child {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #d2f67b;
+  }
+  p:nth-child(2) {
+    font-weight: 500;
+    font-size: 13.4964px;
+    line-height: 17px;
+    color: #d8d8d8;
+    margin: -14px 0 0 2px;
   }
 `
 
