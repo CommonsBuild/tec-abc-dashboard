@@ -1,7 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AccountModule from 'components/AccountModule/AccountModule'
-import Logo from 'components/Logo/Logo'
+import dynamic from 'next/dynamic'
+
+const Logo = dynamic(() => import('components/Logo/Logo'), {
+  ssr: false,
+})
 
 function NavBar({ logoMode }) {
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import colors from 'utils/colors'
+import Image from 'next/image'
 import { capitalizeFirstLetter } from 'utils'
 import { collateral, bonded } from '../../config'
 
@@ -106,7 +107,9 @@ function MintSection() {
           </p>
         </InputContainer>
       </Left>
-      <Right></Right>
+      <Right>
+        <Image src="/images/flowchart.svg" width="511px" height="385px" />
+      </Right>
     </div>
   )
 }
@@ -122,6 +125,7 @@ const Left = styled.div`
 const Right = styled.div`
   display: flex;
   flex: 0.7;
+  justify-content: center;
   background: white;
   background: #191919;
   border-radius: 11px;

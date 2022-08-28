@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useTransition, animated } from 'react-spring'
 
-import logo from '../../assets/logo.svg'
+// import logo from '../../assets/logo.svg'
 
 // function getImage(mode) {
 //   if (mode === 'collateral') {
@@ -25,7 +25,7 @@ function Logo({
     animate.current = true
   }, [])
 
-  const modeTransition = useTransition(mode, null, {
+  const modeTransition = useTransition(mode, {
     immediate: !animate.current,
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -54,11 +54,11 @@ function Logo({
         }
       `}
     >
-      {modeTransition.map(({ item: mode, key, props: { opacity } }) => (
+      {modeTransition(({ opacity }, item, key) => (
         <animated.img
           key={key}
           alt={label}
-          src={logo}
+          src={'/images/logo.svg'}
           style={{ opacity }}
           css={`
             position: absolute;
