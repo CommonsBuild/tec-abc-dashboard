@@ -108,17 +108,25 @@ function MintSection() {
         </InputContainer>
       </Left>
       <Right>
-        <Image src="/images/flowchart.svg" width="511px" height="320px" />
-        <ChartValues>
-          <PoolValue>
-            <p>0.000</p>
-            <p>WXDAI</p>
-          </PoolValue>
-          <PoolValue>
-            <p>0.000</p>
-            <p>WXDAI</p>
-          </PoolValue>
-        </ChartValues>
+        <Chart>
+          <Image src="/images/flowchart.svg" width="511px" height="355px" />
+          <ChartValues>
+            <PoolValue>
+              <p>0.000</p>
+              <p>WXDAI</p>
+            </PoolValue>
+            <PoolValue>
+              <p>0.000</p>
+              <p>WXDAI</p>
+            </PoolValue>
+          </ChartValues>
+        </Chart>
+
+        <NewPrice>
+          <p>New Mint Price</p>
+          <div />
+          <p>$0.00</p>
+        </NewPrice>
       </Right>
     </div>
   )
@@ -135,13 +143,18 @@ const Left = styled.div`
 `
 const Right = styled.div`
   display: flex;
+  position: relative;
   flex: 0.7;
   max-width: 777px;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
   justify-content: center;
   background: #191919;
   border-radius: 11px;
+  padding: 45px 0 0 0;
+`
+const Chart = styled.div`
+  flex-direction: column;
+  margin: 0 0 0 40px;
 `
 
 const MainButtons = styled.div`
@@ -275,8 +288,8 @@ const ChartValues = styled.div`
   justify-content: space-between;
   color: white;
   width: 511px;
-  margin: -20px 0;
-  padding: 0 55px 0 60px;
+  margin: -40px 0;
+  padding: 0 35px 0 39px;
 `
 
 const PoolValue = styled.div`
@@ -294,6 +307,28 @@ const PoolValue = styled.div`
     line-height: 17px;
     color: #d8d8d8;
     margin: -14px 0 0 2px;
+  }
+`
+
+const NewPrice = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 133px;
+  position: absolute;
+  right: 20px;
+  div {
+    border: 1.58537px solid #d2f67b;
+  }
+  p {
+    font-weight: 500;
+    font-size: 25.3659px;
+    line-height: 32px;
+    color: #d2f67b !important;
+    margin: 0;
+  }
+  p:first-child {
+    font-size: 19.0244px;
+    color: #ffffff !important;
   }
 `
 
