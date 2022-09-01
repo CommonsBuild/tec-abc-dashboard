@@ -12,7 +12,7 @@ function Item({ title, content }) {
       <p>{title}</p>
       <p
         css={`
-          margin: -18px 0 0 0;
+          margin: -14px 0 0 0;
         `}
       >
         {content}
@@ -44,9 +44,10 @@ function TopContainer() {
           }
         `}
       >
-        {[1, 2, 3, 4].map(() => {
-          return <Item title="Mint Price" content="$0.00" />
-        })}
+        <Item title="Mint Price" content="$0.00" />
+        <Item title="Burn Price" content="$0.00" />
+        <Item title="Entry Tribute" content="0.00%" />
+        <Item title="Exit Tribute" content="0.00%" />
       </div>
     </>
   )
