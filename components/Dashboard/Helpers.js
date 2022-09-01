@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-export function Container({ leftContent, rightContent }) {
+export function SplitContainer({ leftContent, rightContent }) {
   return (
     <Box>
       <Left>{leftContent}</Left>
@@ -10,10 +10,10 @@ export function Container({ leftContent, rightContent }) {
   )
 }
 
-export function Title({ value }) {
+export function Title({ value, size = '24px' }) {
   return (
     <div>
-      <StyledTitle>{value}</StyledTitle>
+      <StyledTitle fontSize={size}>{value}</StyledTitle>
       <div
         css={`
           width: 76.5px;
@@ -27,13 +27,18 @@ export function Title({ value }) {
 }
 
 export function Display({ title, content }) {
-  return <div></div>
+  return (
+    <DisplayContainer>
+      <p>{title}</p>
+      <p>{content}</p>
+    </DisplayContainer>
+  )
 }
 
 const StyledTitle = styled.p`
   text-transform: uppercase;
   font-weight: 500;
-  font-size: 24px;
+  font-size: ${props => props.fontSize};
   line-height: 30px;
   color: #d2f67b;
 `
@@ -41,20 +46,38 @@ const StyledTitle = styled.p`
 const Box = styled.div`
   display: flex;
   flex-direction: row;
+  width: 1123px;
   height: 495px;
   justify-content: center;
 `
 
 const Left = styled.div`
   display: flex;
-  width: 365px;
+  width: 30%;
   background: #313131;
   border-radius: 11px 0px 0px 11px;
   padding: 71px 39px;
 `
 const Right = styled.div`
+  width: 70%;
   display: flex;
-  width: 838px;
   background: #000000;
   border-radius: 0 11px 11px 0;
+`
+const DisplayContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  p:first-child {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #d2f67b;
+    margin: 0 0 -2px 0;
+  }
+  p:nth-child(2) {
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 45px;
+    color: #ffffff;
+  }
 `

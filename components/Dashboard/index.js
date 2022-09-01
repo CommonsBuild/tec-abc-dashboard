@@ -5,6 +5,8 @@ import TopContainer from './TopContainer'
 import MainCards from './MainCards'
 import MintSection from './MintSection'
 import BondingCurve from './BondingCurve'
+import HistoricalPrice from './HistoricalPrice'
+import LastTransactions from './LastTransactions'
 
 function Dashboard() {
   return (
@@ -33,6 +35,10 @@ function Dashboard() {
         <MintSection />
         <Separator />
         <BondingCurve />
+        <Separator />
+        <HistoricalPrice />
+        <Separator />
+        <LastTransactions />
       </div>
     </>
   )

@@ -145,7 +145,7 @@ const Right = styled.div`
   display: flex;
   position: relative;
   flex: 0.7;
-  max-width: 777px;
+  width: 677px;
   flex-direction: row;
   justify-content: center;
   background: #191919;

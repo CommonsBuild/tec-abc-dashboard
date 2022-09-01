@@ -1,19 +1,18 @@
 import React from 'react'
 import { SplitContainer, Title, Display } from './Helpers'
 
-function BondingCurve() {
+function HistoricalPrice() {
   const leftContent = () => {
     return (
       <div>
-        <Title value="Bonding Curve" />
+        <Title value="Historical Price" />
         <div
           css={`
             margin: 43.5px 0 0 0;
           `}
         >
-          <Display title="Token Price" content={'1.60 wxDAI'} />
-          <Display title="Reserve Balance" content={'743.340 wxDAI'} />
-          <Display title="Reserve Ratio" content={'19.98%'} />
+          <Display title="Mint" content={'2 USD'} />
+          <Display title="Burn" content={'0.80 USD'} />
         </div>
       </div>
     )
@@ -28,4 +27,4 @@ function BondingCurve() {
   )
 }
 
-export default BondingCurve
+export default HistoricalPrice
