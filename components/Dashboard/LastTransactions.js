@@ -1,39 +1,41 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Title, Display } from './Helpers'
+import { MainTitle } from './Helpers'
 
 function LastTransactions() {
   return (
     <div>
       <BigTitle>
-        <Title value={'Last Transactions'} size="32px" />
+        <MainTitle value={'Last Transactions'} size="32px" />
       </BigTitle>
       <TableContainer>
         <table>
-          <tr>
-            <th>Account</th>
-            <th>Reserve</th>
-            <th>Total Supply {`(TEC)`}</th>
-            <th>Amount In</th>
-            <th>Price</th>
-            <th>Tribute</th>
-            <th>Amount Out</th>
-            <th>New Price</th>
-          </tr>
-          {[1, 2, 3, 4, 5, 6].map(i => {
-            return (
-              <tr>
-                <td>0x0000...0000</td>
-                <td>1000 wxDAI</td>
-                <td>1000</td>
-                <td>100000 wxDAI</td>
-                <td>1.00</td>
-                <td>100000</td>
-                <td>10000 TEC</td>
-                <td>1.38</td>
-              </tr>
-            )
-          })}
+          <tbody>
+            <tr>
+              <th>Account</th>
+              <th>Reserve</th>
+              <th>Total Supply {`(TEC)`}</th>
+              <th>Amount In</th>
+              <th>Price</th>
+              <th>Tribute</th>
+              <th>Amount Out</th>
+              <th>New Price</th>
+            </tr>
+            {[1, 2, 3, 4, 5, 6].map(i => {
+              return (
+                <tr>
+                  <td>0x0000...0000</td>
+                  <td>1000 wxDAI</td>
+                  <td>1000</td>
+                  <td>100000 wxDAI</td>
+                  <td>1.00</td>
+                  <td>100000</td>
+                  <td>10000 TEC</td>
+                  <td>1.38</td>
+                </tr>
+              )
+            })}
+          </tbody>
         </table>
       </TableContainer>
     </div>

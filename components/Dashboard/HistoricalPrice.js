@@ -1,11 +1,11 @@
 import React from 'react'
-import { SplitContainer, Title, Display } from './Helpers'
+import { SplitContainer, MainTitle, Display } from './Helpers'
 
 function HistoricalPrice() {
   const leftContent = () => {
     return (
       <div>
-        <Title value="Historical Price" />
+        <MainTitle value="Historical Price" />
         <div
           css={`
             margin: 43.5px 0 0 0;

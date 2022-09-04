@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import styled from 'styled-components'
 import NavBar from 'components/NavBar/NavBar'
 import TopContainer from './TopContainer'
@@ -9,6 +10,45 @@ import HistoricalPrice from './HistoricalPrice'
 import LastTransactions from './LastTransactions'
 
 function Dashboard() {
+  const [chartPriceVsBalance, setChartPriceVsBalance] = useState(null)
+
+  useEffect(() => {
+    const bondingCurveData = async () => {
+      try {
+        axios
+          .post(
+            'https://dev-commons-config-backend.herokuapp.com/augmented-bonding-curve',
+            null,
+            {
+              params: {
+                openingPrice: '1.00',
+                commonsTribute: 0.6888,
+                entryTribute: 0.02,
+                exitTribute: 0.12,
+                stepList: [],
+                initialBuy: 265000,
+                ragequitAmount: 35795,
+                zoomGraph: '0',
+                includeMilestones: 1,
+                virtualSupply: 1,
+                virtualBalance: 1,
+              },
+            }
+          )
+          .then(function(response) {
+            setChartPriceVsBalance(response?.data?.chartData)
+          })
+          .catch(function(error) {
+            console.log({ error })
+          })
+      } catch (error) {
+        console.log({ error })
+      }
+    }
+    // Fetch info
+    bondingCurveData()
+  }, [])
+
   return (
     <>
       <NavBar />
@@ -34,7 +74,7 @@ function Dashboard() {
         <MainCards />
         <MintSection />
         <Separator />
-        <BondingCurve />
+        <BondingCurve chartData={chartPriceVsBalance} />
         <Separator />
         <HistoricalPrice />
         <Separator />

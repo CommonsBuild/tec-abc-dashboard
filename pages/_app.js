@@ -5,6 +5,7 @@ import { useSpring, animated } from 'react-spring'
 import { createGlobalStyle } from 'styled-components'
 import { ViewportProvider } from 'use-viewport'
 import { WalletProvider } from 'lib/wallet'
+import '../styles/globals.css'
 
 const GlobalStyles = createGlobalStyle`
   @font-face {

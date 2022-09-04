@@ -10,7 +10,7 @@ export function SplitContainer({ leftContent, rightContent }) {
   )
 }
 
-export function Title({ value, size = '24px' }) {
+export function MainTitle({ value, size = '24px' }) {
   return (
     <div>
       <StyledTitle fontSize={size}>{value}</StyledTitle>
@@ -19,7 +19,6 @@ export function Title({ value, size = '24px' }) {
           width: 76.5px;
           background: #d2f67b;
           border: 3px solid #d2f67b;
-          margin: -6px 0 0 0;
         `}
       />
     </div>
@@ -53,6 +52,7 @@ const Box = styled.div`
 
 const Left = styled.div`
   display: flex;
+  justify-content: space-around;
   width: 30%;
   background: #313131;
   border-radius: 11px 0px 0px 11px;
@@ -61,6 +61,7 @@ const Left = styled.div`
 const Right = styled.div`
   width: 70%;
   display: flex;
+  justify-content: center;
   background: #000000;
   border-radius: 0 11px 11px 0;
 `
@@ -79,5 +80,6 @@ const DisplayContainer = styled.div`
     font-size: 36px;
     line-height: 45px;
     color: #ffffff;
+    margin: 0 0 28px 0;
   }
 `
