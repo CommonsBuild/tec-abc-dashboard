@@ -19,6 +19,7 @@ function ChartAxisLabel({ label, rotate, tooltipPosition, tooltipText }) {
           rotate &&
             'block transform -rotate-90 w-56 text-center pt-2 tablet:pt-10 laptop:pt-18 desktop:pt-28'
         )}
+        style={{ color: '#60D0DA' }}
       >
         {label}
       </span>

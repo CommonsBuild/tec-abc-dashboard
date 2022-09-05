@@ -88,7 +88,7 @@ const Content = styled.p`
   font-size: 27.6615px;
   line-height: 35px;
   color: #d2f67b;
-  margin: -9px 0 0 0;
+  margin: -2px 0 0 0;
 `
 const ExtraContent = styled.p`
   font-weight: 400;

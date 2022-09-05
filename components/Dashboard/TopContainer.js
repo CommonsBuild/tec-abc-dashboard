@@ -10,13 +10,7 @@ function Item({ title, content }) {
       `}
     >
       <p>{title}</p>
-      <p
-        css={`
-          margin: -14px 0 0 0;
-        `}
-      >
-        {content}
-      </p>
+      <p>{content}</p>
     </div>
   )
 }

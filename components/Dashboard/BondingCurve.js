@@ -12,7 +12,7 @@ import {
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import { SplitContainer, MainTitle, Display } from './Helpers'
-import { ChartGrid } from '../Chart'
+import { ChartGrid, ChartAxisLabel } from '../Chart'
 
 ChartJS.register(
   CategoryScale,
@@ -37,14 +37,30 @@ function BondingCurve({ chartData }) {
         datasets: [
           {
             label: 'Price',
-            fill: true,
+            fill: 'start',
             data: price,
-            borderColor: 'transparent',
-            pointBackgroundColor: '#DEFB48',
+            borderColor: '#03B3FF',
+            pointBackgroundColor: '#03B3FF',
             pointHoverRadius: 7,
             pointRadius: 5,
             pointStyle: 'rect',
-            backgroundColor: 'transparent',
+            backgroundColor: ({ chart }) => {
+              const { ctx, chartArea } = chart
+              if (!chartArea) return 'red'
+              const angleInDeg = 321.68
+              const angle = ((180 - angleInDeg) / 180) * Math.PI
+              const x2 = 200 * Math.cos(angle)
+              const y2 = 100 * Math.sin(angle)
+              const bg = ctx.createLinearGradient(
+                0,
+                chartArea.top,
+                0,
+                chartArea.bottom
+              )
+              bg.addColorStop(0.1, 'rgba(3, 179, 255, 0.4')
+              bg.addColorStop(0.9, 'rgba(222, 251, 72, 0.2)')
+              return bg
+            },
           },
         ],
       })
@@ -115,16 +131,12 @@ function BondingCurve({ chartData }) {
   const rightContent = () => {
     if (!data) return
     return (
-      <div
-        css={`
-          width: 70%;
-        `}
-      >
+      <div className="bg-transparent ml-6 mr-8 p-8 w-full">
         <ChartGrid
           id="Bonding Curve"
           chart={<Line data={data} options={options} />}
-          // xAxisLabel={<ChartAxisLabel label="reserve balance (wxDAI)" />}
-          // yAxisLabel={<ChartAxisLabel label="token price (wxdai)" rotate />}
+          xAxisLabel={<ChartAxisLabel label="reserve balance (wxDAI)" />}
+          yAxisLabel={<ChartAxisLabel label="token price (wxdai)" rotate />}
         />
       </div>
     )

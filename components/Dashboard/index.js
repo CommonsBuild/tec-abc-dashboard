@@ -5,9 +5,9 @@ import NavBar from 'components/NavBar/NavBar'
 import TopContainer from './TopContainer'
 import MainCards from './MainCards'
 import MintSection from './MintSection'
-import BondingCurve from './BondingCurve'
 import HistoricalPrice from './HistoricalPrice'
 import LastTransactions from './LastTransactions'
+import BondingCurve from './BondingCurve'
 
 function Dashboard() {
   const [chartPriceVsBalance, setChartPriceVsBalance] = useState(null)

@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.chart-grid {
+  grid-template-rows: 1fr 1rem;
+  grid-template-columns: 2rem 1fr;
+}
+
+.chart {
+  width: calc(100% - 55px);
+  margin-left: 42px;
+  top: calc(40% - 22.5px);
+}

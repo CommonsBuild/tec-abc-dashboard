@@ -246,7 +246,6 @@ const Button = styled.button`
     color: #ffffff;
   }
   p:nth-child(2) {
-    margin: -14px 0 0 0;
     font-weight: 500;
     font-size: 10.6388px;
     line-height: 13px;
@@ -265,7 +264,7 @@ const InputContainer = styled.div`
     line-height: 118%;
     text-align: center;
     color: #ffffff;
-    padding: 14px 0 0 6px;
+    padding: 0 0 0 6px;
   }
   input[type='checkbox'] {
     display: block;
@@ -306,7 +305,7 @@ const PoolValue = styled.div`
     font-size: 13.4964px;
     line-height: 17px;
     color: #d8d8d8;
-    margin: -14px 0 0 2px;
+    margin: 0 0 0 2px;
   }
 `
 

@@ -19,6 +19,7 @@ export function MainTitle({ value, size = '24px' }) {
           width: 76.5px;
           background: #d2f67b;
           border: 3px solid #d2f67b;
+          margin: 6px 0 0 0;
         `}
       />
     </div>
