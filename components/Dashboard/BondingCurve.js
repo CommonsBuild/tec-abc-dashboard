@@ -93,6 +93,14 @@ function BondingCurve({ chartData }) {
           },
         },
       },
+      y: {
+        grid: {
+          drawBorder: false,
+          color: function() {
+            return '#353535'
+          },
+        },
+      },
       yAxes: {
         type: 'linear',
         grid: {
