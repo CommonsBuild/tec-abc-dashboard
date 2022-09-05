@@ -46,7 +46,8 @@ function BondingCurve({ chartData }) {
             pointStyle: 'rect',
             backgroundColor: ({ chart }) => {
               const { ctx, chartArea } = chart
-              if (!chartArea) return 'red'
+              if (!chartArea) return 'rgba(222, 251, 72, 0.03)'
+              // TODO: ADD THE RIGHT ANGLE
               const angleInDeg = 321.68
               const angle = ((180 - angleInDeg) / 180) * Math.PI
               const x2 = 200 * Math.cos(angle)
@@ -58,7 +59,7 @@ function BondingCurve({ chartData }) {
                 chartArea.bottom
               )
               bg.addColorStop(0.1, 'rgba(3, 179, 255, 0.4')
-              bg.addColorStop(0.9, 'rgba(222, 251, 72, 0.2)')
+              bg.addColorStop(0.9, 'rgba(222, 251, 72, 0.03)')
               return bg
             },
           },
