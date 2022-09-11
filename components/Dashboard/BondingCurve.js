@@ -41,12 +41,13 @@ function BondingCurve({ chartData }) {
             data: price,
             borderColor: '#03B3FF',
             pointBackgroundColor: '#03B3FF',
-            pointHoverRadius: 7,
-            pointRadius: 5,
+            pointHoverRadius: 2,
+            pointRadius: 1,
             pointStyle: 'rect',
             backgroundColor: ({ chart }) => {
               const { ctx, chartArea } = chart
-              if (!chartArea) return 'rgba(222, 251, 72, 0.03)'
+              console.log({ chartArea })
+              if (!chartArea) return 'red'
               // TODO: ADD THE RIGHT ANGLE
               const angleInDeg = 321.68
               const angle = ((180 - angleInDeg) / 180) * Math.PI
@@ -76,15 +77,18 @@ function BondingCurve({ chartData }) {
         display: false,
       },
       tooltip: {
-        enabled: false,
+        callbacks: {
+          label: (tooltipItem, data) => {
+            return `$${tooltipItem?.formattedValue} WXDAI`
+          },
+        },
       },
     },
     scales: {
       xAxes: {
         type: 'linear',
         grid: {
-          display: false,
-          borderColor: '#03B3FF',
+          borderColor: 'white',
         },
         ticks: {
           color: '#FFFFFF',
@@ -94,31 +98,62 @@ function BondingCurve({ chartData }) {
         },
       },
       y: {
+        type: 'linear',
         grid: {
           drawBorder: false,
           color: function() {
             return '#353535'
           },
         },
-      },
-      yAxes: {
-        type: 'linear',
-        grid: {
-          display: false,
-          borderColor: '#03B3FF',
-        },
         ticks: {
-          color: '#FFFFFF',
-          stepSize: 0.2,
-          callback(value) {
-            return value.toFixed(2)
-          },
+          color: 'white',
         },
         beginAtZero: true,
         position: 'left',
       },
+      yAxes: {
+        display: false,
+      },
+    },
+    tooltips: {
+      mode: 'index',
+      intersect: true,
     },
   }
+
+  const plugins = [
+    {
+      afterDraw: chart => {
+        const { ctx, scales, _metasets } = chart
+        // paint static vertical line
+        const parsedDataset = _metasets[0]?._parsed
+        // replace these values with the red point on design
+        const currentPointIndex = parsedDataset.findIndex(
+          i => i.x === 261.18861840293226 && i.y === 0.7172208025193746
+        )
+        const currentPoint = _metasets[0].dataset._points[currentPointIndex]
+        const { x, y } = currentPoint
+        const bottomY = scales.yAxes.bottom
+
+        ctx.beginPath()
+        ctx.arc(x, y, 8, 0, 2 * Math.PI, true)
+        ctx.strokeStyle = '#F56969'
+        ctx.stroke()
+        ctx.fillStyle = '#F56969'
+        ctx.fill()
+
+        ctx.save()
+        ctx.setLineDash([5, 3])
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x, bottomY)
+        ctx.lineWidth = 2
+        ctx.strokeStyle = '#F56969'
+        ctx.stroke()
+        ctx.restore()
+      },
+    },
+  ]
 
   const leftContent = () => {
     return (
@@ -143,7 +178,7 @@ function BondingCurve({ chartData }) {
       <div className="bg-transparent ml-6 mr-8 p-8 w-full">
         <ChartGrid
           id="Bonding Curve"
-          chart={<Line data={data} options={options} />}
+          chart={<Line data={data} options={options} plugins={plugins} />}
           xAxisLabel={<ChartAxisLabel label="reserve balance (wxDAI)" />}
           yAxisLabel={<ChartAxisLabel label="token price (wxdai)" rotate />}
         />

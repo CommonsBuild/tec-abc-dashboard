@@ -76,7 +76,7 @@ function Dashboard() {
         <Separator />
         <BondingCurve chartData={chartPriceVsBalance} />
         <Separator />
-        <HistoricalPrice />
+        <HistoricalPrice chartData={chartPriceVsBalance} />
         <Separator />
         <LastTransactions />
       </div>
