@@ -7,7 +7,6 @@ import {
 } from 'lib/web3-contracts'
 import { bigNum } from 'lib/utils'
 import ConvertSteps from 'components/ConvertSteps/ConvertSteps'
-import FullPageLoader from '../FullPageLoader'
 
 function ManageConversion({
   toBonded,
@@ -108,7 +107,7 @@ function ManageConversion({
 
   return (
     <>
-      {conversionSteps.length > 0 ? (
+      {conversionSteps.length > 0 && (
         <ConvertSteps
           steps={conversionSteps}
           toBonded={toBonded}
@@ -116,18 +115,6 @@ function ManageConversion({
           convertedTotal={convertedTotal}
           onReturnHome={handleReturnHome}
         />
-      ) : (
-        <div
-          css={`
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100vw;
-            height: 100vh;
-          `}
-        >
-          <FullPageLoader />
-        </div>
       )}
     </>
   )

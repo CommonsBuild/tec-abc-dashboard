@@ -1,3 +1,5 @@
+import { formatUnits } from 'lib/web3-utils'
+
 export function capitalizeFirstLetter(str) {
   const capitalized = str.charAt(0).toUpperCase() + str.slice(1)
   return capitalized
@@ -27,5 +29,11 @@ export function formatNumber(num, digits = 4) {
   return item
     ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol
     : '0'
-  return Number(value).toFixed(3)
+}
+
+export function formatWEI(val) {
+  return formatUnits(val || 0, {
+    truncateToDecimalPlace: 3,
+    replaceZeroBy: '0',
+  })
 }

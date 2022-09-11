@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
-import { capitalizeFirstLetter, formatNumber } from 'utils'
+import { useWalletAugmented } from 'lib/wallet'
+import { useTokenBalance } from 'lib/web3-contracts'
+import { capitalizeFirstLetter, formatNumber, formatWEI } from 'utils'
 import { collateral, bonded } from '../../config'
+import ManageConversion from './ManageConversion'
+
+const options = [collateral.symbol, bonded.symbol]
 
 const Amount = ({ token, amount, primary, secondary, onChange }) => {
+  const { account } = useWalletAugmented()
   return (
     <AmountContainer>
       <div
@@ -22,7 +28,13 @@ const Amount = ({ token, amount, primary, secondary, onChange }) => {
           background: ${secondary};
         `}
       >
-        <input type="number" min="0" value={amount} onChange={onChange} />
+        <input
+          type="number"
+          min="0"
+          value={amount}
+          onChange={onChange}
+          disabled={!account}
+        />
       </div>
     </AmountContainer>
   )
@@ -31,13 +43,25 @@ const Amount = ({ token, amount, primary, secondary, onChange }) => {
 function MintSection() {
   const [select, setSelection] = useState('mint')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [startTx, setStartTx] = useState(false)
   const [token0, setToken0] = useState(0)
   const [token1, setToken1] = useState(0)
   const mainToken = bonded.symbol
   const mainTokenPrice = 1.2
   const collateralToken = collateral.symbol
   const reservePercentage = 0.92
-  const commonPercentage = 0.09
+  const commonPercentage = 0.08
+  const { account } = useWalletAugmented()
+  const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
+  const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
+
+  console.log({
+    TEC: formatWEI(token0Balance),
+    spendableTEC: formatWEI(spendable0Balance),
+    wXDAI: formatWEI(token1Balance),
+    spendableWXDAI: formatWEI(spendable1Balance),
+  })
+
   const checkEmptyVal = val => {
     if (!val || Number(val) < 0) {
       setToken0(null)
@@ -65,7 +89,6 @@ function MintSection() {
       </SelectButton>
     )
   }
-  console.log({ token1 })
   return (
     <div
       css={`
@@ -77,6 +100,16 @@ function MintSection() {
         height: 442px;
       `}
     >
+      {account && startTx && (
+        <FullScreen>
+          <ManageConversion
+            toBonded={select === 'mint'}
+            fromAmount={'1'}
+            handleReturnHome={() => setStartTx(false)}
+            minReturn={'1'}
+          />
+        </FullScreen>
+      )}
       <Left>
         <MainButtons>
           <Selection type="mint" />
@@ -109,15 +142,19 @@ function MintSection() {
           }}
         />
         <Button
+          onClick={() => {
+            setStartTx(!startTx)
+          }}
           css={`
             background: ${select === 'mint' ? colors.mint : colors.red};
           `}
         >
           <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
           <p>
-            {`Deposit ${collateralToken} and ${
-              select === 'mint' ? 'Mint' : 'Burn'
-            } ${mainToken}`}
+            {select === 'mint'
+              ? `Deposit ${collateralToken} and mint ${mainToken}`
+              : select === 'burn' &&
+                `Burn  ${mainToken} and get ${collateralToken} `}
           </p>
         </Button>
         <InputContainer>
@@ -158,6 +195,18 @@ function MintSection() {
     </div>
   )
 }
+
+const FullScreen = styled.div`
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+`
 
 const Left = styled.div`
   display: flex;

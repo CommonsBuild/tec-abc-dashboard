@@ -46,7 +46,6 @@ function BondingCurve({ chartData }) {
             pointStyle: 'rect',
             backgroundColor: ({ chart }) => {
               const { ctx, chartArea } = chart
-              console.log({ chartArea })
               if (!chartArea) return 'red'
               // TODO: ADD THE RIGHT ANGLE
               const angleInDeg = 321.68

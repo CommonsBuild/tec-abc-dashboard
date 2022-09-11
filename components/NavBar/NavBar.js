@@ -11,8 +11,6 @@ function NavBar({ logoMode }) {
   return (
     <div
       css={`
-        position: relative;
-        z-index: 5;
         width: 100vw;
         display: flex;
         flex-direction: row;
@@ -22,7 +20,13 @@ function NavBar({ logoMode }) {
       `}
     >
       <Logo mode={logoMode} />
-      <AccountModule />
+      <div
+        css={`
+          z-index: 5;
+        `}
+      >
+        <AccountModule />
+      </div>
     </div>
   )
 }
