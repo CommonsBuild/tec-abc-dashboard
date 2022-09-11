@@ -2,36 +2,49 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
-import { capitalizeFirstLetter } from 'utils'
+import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
+
+const Amount = ({ token, amount, primary, secondary, onChange }) => {
+  return (
+    <AmountContainer>
+      <div
+        css={`
+          flex: 0.4;
+          background: ${primary};
+        `}
+      >
+        <p>{token}</p>
+      </div>
+      <div
+        css={`
+          flex: 0.6;
+          background: ${secondary};
+        `}
+      >
+        <input type="number" min="0" value={amount} onChange={onChange} />
+      </div>
+    </AmountContainer>
+  )
+}
 
 function MintSection() {
   const [select, setSelection] = useState('mint')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
-
+  const [token0, setToken0] = useState(0)
+  const [token1, setToken1] = useState(0)
   const mainToken = bonded.symbol
+  const mainTokenPrice = 1.2
   const collateralToken = collateral.symbol
-  const Amount = ({ token, amount, primary, secondary }) => {
-    return (
-      <AmountContainer>
-        <div
-          css={`
-            flex: 0.4;
-            background: ${primary};
-          `}
-        >
-          <p>{token}</p>
-        </div>
-        <div
-          css={`
-            flex: 0.6;
-            background: ${secondary};
-          `}
-        >
-          <input type="number" value={amount} />
-        </div>
-      </AmountContainer>
-    )
+  const reservePercentage = 0.92
+  const commonPercentage = 0.09
+  const checkEmptyVal = val => {
+    if (!val || Number(val) < 0) {
+      setToken0(null)
+      setToken1(null)
+      return true
+    }
+    return false
   }
 
   const Selection = ({ type }) => {
@@ -52,7 +65,7 @@ function MintSection() {
       </SelectButton>
     )
   }
-
+  console.log({ token1 })
   return (
     <div
       css={`
@@ -73,13 +86,27 @@ function MintSection() {
           token={collateralToken}
           primary="#393741"
           secondary="#00707A"
-          amount={0}
+          amount={token0}
+          onChange={e => {
+            e.preventDefault()
+            const val = e.target.value
+            if (checkEmptyVal(val)) return
+            setToken0(val)
+            setToken1((val / mainTokenPrice).toFixed(1))
+          }}
         />
         <Amount
           token={mainToken}
           primary="#0E684C"
           secondary="#137556"
-          amount={0}
+          amount={token1}
+          onChange={e => {
+            e.preventDefault()
+            const val = e.target.value
+            if (checkEmptyVal(val)) return
+            setToken1(val)
+            setToken0((val * mainTokenPrice).toFixed(1))
+          }}
         />
         <Button
           css={`
@@ -112,11 +139,11 @@ function MintSection() {
           <Image src="/images/flowchart.svg" width="511px" height="355px" />
           <ChartValues>
             <PoolValue>
-              <p>0.000</p>
+              <p>{formatNumber(token0 ? token0 * commonPercentage : 0)}</p>
               <p>WXDAI</p>
             </PoolValue>
             <PoolValue>
-              <p>0.000</p>
+              <p>{formatNumber(token0 ? token0 * reservePercentage : 0)}</p>
               <p>WXDAI</p>
             </PoolValue>
           </ChartValues>
@@ -288,12 +315,14 @@ const ChartValues = styled.div`
   color: white;
   width: 511px;
   margin: -40px 0;
-  padding: 0 35px 0 39px;
+  padding: 0 19px;
 `
 
 const PoolValue = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 82px;
+  align-items: center;
   p:first-child {
     font-weight: 400;
     font-size: 16px;
