@@ -94,8 +94,8 @@ export default class Document extends NextDocument {
           <meta name="description" content={env('SITE_DESCRIPTION')} />
           <style>{`
             html, body {
-            min-height: 100vh;
             background-color: #313131 !important;
+            margin: 0;
           `}</style>
         </Head>
         <body>

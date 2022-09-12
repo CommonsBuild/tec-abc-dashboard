@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
 import { useWalletAugmented } from 'lib/wallet'
-import { useTokenBalance } from 'lib/web3-contracts'
+import { useBondingCurvePrice, useTokenBalance } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber, formatWEI } from 'utils'
 import { collateral, bonded } from '../../config'
 import ManageConversion from './ManageConversion'
@@ -55,6 +55,20 @@ function MintSection() {
   const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
   const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
 
+  const {
+    loading: bondingPriceLoading,
+    price: bondingCurvePrice,
+    pricePerUnit: bondingCurvePricePerUnit,
+    entryTribute,
+    exitTribute,
+  } = useBondingCurvePrice(token1, select === 'mint')
+  console.log({
+    bondingPriceLoading,
+    bondingCurvePrice,
+    bondingCurvePricePerUnit,
+    entryTribute: formatWEI(entryTribute),
+    exitTribute: formatWEI(exitTribute),
+  })
   console.log({
     TEC: formatWEI(token0Balance),
     spendableTEC: formatWEI(spendable0Balance),
@@ -90,16 +104,7 @@ function MintSection() {
     )
   }
   return (
-    <div
-      css={`
-        display: flex;
-        flex-direction: row;
-        gap: 30px;
-        justify-content: center;
-        margin: 48px 0 0 0;
-        height: 442px;
-      `}
-    >
+    <>
       {account && startTx && (
         <FullScreen>
           <ManageConversion
@@ -110,100 +115,111 @@ function MintSection() {
           />
         </FullScreen>
       )}
-      <Left>
-        <MainButtons>
-          <Selection type="mint" />
-          <Selection type="burn" />
-        </MainButtons>
-        <Amount
-          token={collateralToken}
-          primary="#393741"
-          secondary="#00707A"
-          amount={token0}
-          onChange={e => {
-            e.preventDefault()
-            const val = e.target.value
-            if (checkEmptyVal(val)) return
-            setToken0(val)
-            setToken1((val / mainTokenPrice).toFixed(1))
-          }}
-        />
-        <Amount
-          token={mainToken}
-          primary="#0E684C"
-          secondary="#137556"
-          amount={token1}
-          onChange={e => {
-            e.preventDefault()
-            const val = e.target.value
-            if (checkEmptyVal(val)) return
-            setToken1(val)
-            setToken0((val * mainTokenPrice).toFixed(1))
-          }}
-        />
-        <Button
-          onClick={() => {
-            setStartTx(!startTx)
-          }}
-          css={`
-            background: ${select === 'mint' ? colors.mint : colors.red};
-          `}
-        >
-          <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
-          <p>
-            {select === 'mint'
-              ? `Deposit ${collateralToken} and mint ${mainToken}`
-              : select === 'burn' &&
-                `Burn  ${mainToken} and get ${collateralToken} `}
-          </p>
-        </Button>
-        <InputContainer>
-          <input
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={() => setAcceptedTerms(!acceptedTerms)}
+      <div
+        css={`
+          display: flex;
+          flex-direction: row;
+          gap: 30px;
+          justify-content: center;
+          margin: 48px 0 0 0;
+          height: 442px;
+        `}
+      >
+        <Left>
+          <MainButtons>
+            <Selection type="mint" />
+            <Selection type="burn" />
+          </MainButtons>
+          <Amount
+            token={collateralToken}
+            primary="#393741"
+            secondary="#00707A"
+            amount={token0}
+            onChange={e => {
+              e.preventDefault()
+              const val = e.target.value
+              if (checkEmptyVal(val)) return
+              setToken0(val)
+              setToken1((val / mainTokenPrice).toFixed(1))
+            }}
           />
-          <p>
-            {` By clicking on "${capitalizeFirstLetter(
-              select
-            )}" you are accepting `}{' '}
-            <a>these terms</a>
-          </p>
-        </InputContainer>
-      </Left>
-      <Right>
-        <Chart>
-          <Image src="/images/flowchart.svg" width="511px" height="355px" />
-          <ChartValues>
-            <PoolValue>
-              <p>{formatNumber(token0 ? token0 * commonPercentage : 0)}</p>
-              <p>WXDAI</p>
-            </PoolValue>
-            <PoolValue>
-              <p>{formatNumber(token0 ? token0 * reservePercentage : 0)}</p>
-              <p>WXDAI</p>
-            </PoolValue>
-          </ChartValues>
-        </Chart>
+          <Amount
+            token={mainToken}
+            primary="#0E684C"
+            secondary="#137556"
+            amount={token1}
+            onChange={e => {
+              e.preventDefault()
+              const val = e.target.value
+              if (checkEmptyVal(val)) return
+              setToken1(val)
+              setToken0((val * mainTokenPrice).toFixed(1))
+            }}
+          />
+          <Button
+            onClick={() => {
+              setStartTx(!startTx)
+            }}
+            css={`
+              background: ${select === 'mint' ? colors.mint : colors.red};
+            `}
+          >
+            <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
+            <p>
+              {select === 'mint'
+                ? `Deposit ${collateralToken} and mint ${mainToken}`
+                : select === 'burn' &&
+                  `Burn  ${mainToken} and get ${collateralToken} `}
+            </p>
+          </Button>
+          <InputContainer>
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={() => setAcceptedTerms(!acceptedTerms)}
+            />
+            <p>
+              {` By clicking on "${capitalizeFirstLetter(
+                select
+              )}" you are accepting `}{' '}
+              <a>these terms</a>
+            </p>
+          </InputContainer>
+        </Left>
+        <Right>
+          <Chart>
+            <Image src="/images/flowchart.svg" width="511px" height="355px" />
+            <ChartValues>
+              <PoolValue>
+                <p>{formatNumber(token0 ? token0 * commonPercentage : 0)}</p>
+                <p>WXDAI</p>
+              </PoolValue>
+              <PoolValue>
+                <p>{formatNumber(token0 ? token0 * reservePercentage : 0)}</p>
+                <p>WXDAI</p>
+              </PoolValue>
+            </ChartValues>
+          </Chart>
 
-        <NewPrice>
-          <p>New Mint Price</p>
-          <div />
-          <p>$0.00</p>
-        </NewPrice>
-      </Right>
-    </div>
+          <NewPrice>
+            <p>New Mint Price</p>
+            <div />
+            <p>$0.00</p>
+          </NewPrice>
+        </Right>
+      </div>
+    </>
   )
 }
 
 const FullScreen = styled.div`
-  position: fixed;
+  position: absolute;
   z-index: 1000;
   width: 100%;
-  max-height: 100%;
-  overflow: hidden;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   align-items: center;
   justify-content: center;
 `
