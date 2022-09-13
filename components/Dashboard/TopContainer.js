@@ -1,4 +1,6 @@
 import React from 'react'
+import { bonded } from '../../config'
+import { useConvertInputs } from './useConvertInputs'
 
 function Item({ title, content }) {
   return (
@@ -16,6 +18,21 @@ function Item({ title, content }) {
 }
 
 function TopContainer() {
+  const {
+    entryTributePct,
+    exitTributePct,
+    pricePerUnitReceived,
+  } = useConvertInputs(bonded.symbol) // WXDAI
+
+  const mintPrice = (
+    pricePerUnitReceived *
+    (1 - entryTributePct / 100)
+  ).toFixed(2)
+  const burnPrice = (
+    (1 / pricePerUnitReceived) *
+    (1 - exitTributePct / 100)
+  ).toFixed(2)
+
   return (
     <>
       <div
@@ -38,10 +55,10 @@ function TopContainer() {
           }
         `}
       >
-        <Item title="Mint Price" content="$0.00" />
-        <Item title="Burn Price" content="$0.00" />
-        <Item title="Entry Tribute" content="0.00%" />
-        <Item title="Exit Tribute" content="0.00%" />
+        <Item title="Mint Price" content={`$${mintPrice}`} />
+        <Item title="Burn Price" content={`$${burnPrice}`} />
+        <Item title="Entry Tribute" content={`${entryTributePct}%`} />
+        <Item title="Exit Tribute" content={`${exitTributePct}%`} />
       </div>
     </>
   )

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
@@ -6,6 +7,7 @@ import { useWalletAugmented } from 'lib/wallet'
 import { useBondingCurvePrice, useTokenBalance } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber, formatWEI } from 'utils'
 import { collateral, bonded } from '../../config'
+import { useConvertInputs } from './useConvertInputs'
 import ManageConversion from './ManageConversion'
 
 const options = [collateral.symbol, bonded.symbol]
@@ -47,21 +49,50 @@ function MintSection() {
   const [token0, setToken0] = useState(0)
   const [token1, setToken1] = useState(0)
   const mainToken = bonded.symbol
-  const mainTokenPrice = 1.2
   const collateralToken = collateral.symbol
   const reservePercentage = 0.92
   const commonPercentage = 0.08
   const { account } = useWalletAugmented()
   const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
   const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
+  const toBonded = select === 'mint' // ???
 
   const {
-    loading: bondingPriceLoading,
     price: bondingCurvePrice,
     pricePerUnit: bondingCurvePricePerUnit,
     entryTribute,
     exitTribute,
-  } = useBondingCurvePrice(token1, select === 'mint')
+  } = useBondingCurvePrice(token1, toBonded)
+  const {
+    amountSource,
+    bindOtherInput,
+    bondingPriceLoading,
+    handleManualInputChange,
+    inputValueRecipient,
+    inputValueSource,
+    resetInputs,
+    amountMinWithSlippage,
+    amountMinWithSlippageFormatted,
+    entryTributePct,
+    exitTributePct,
+    pricePerUnitReceived,
+    amountRetained,
+  } = useConvertInputs(options[1]) // WXDAI
+  console.log({
+    amountSource,
+    bindOtherInput,
+    bondingPriceLoading,
+    handleManualInputChange,
+    inputValueRecipient,
+    inputValueSource,
+    resetInputs,
+    amountMinWithSlippage,
+    amountMinWithSlippageFormatted,
+    entryTributePct,
+    exitTributePct,
+    pricePerUnitReceived,
+    amountRetained,
+  })
   console.log({
     bondingPriceLoading,
     bondingCurvePrice,
@@ -75,6 +106,8 @@ function MintSection() {
     wXDAI: formatWEI(token1Balance),
     spendableWXDAI: formatWEI(spendable1Balance),
   })
+
+  const mainTokenPrice = 1 / pricePerUnitReceived
 
   const checkEmptyVal = val => {
     if (!val || Number(val) < 0) {
@@ -99,21 +132,26 @@ function MintSection() {
         }}
       >
         <p>{type === 'mint' ? 'Mint Price' : 'Burn Price'}</p>
-        <EntryText>Entry Tribute 8%</EntryText>
+        <EntryText>{type === 'mint' ? 'Entry' : 'Exit'} Tribute 8%</EntryText>
       </SelectButton>
     )
   }
   return (
     <>
       {account && startTx && (
-        <FullScreen>
+        <Modal
+          isOpen={startTx}
+          onRequestClose={() => setStartTx(false)}
+          style={modalStyle}
+          contentLabel="Conversion Modal"
+        >
           <ManageConversion
             toBonded={select === 'mint'}
             fromAmount={'1'}
             handleReturnHome={() => setStartTx(false)}
-            minReturn={'1'}
+            minReturn={amountMinWithSlippage}
           />
-        </FullScreen>
+        </Modal>
       )}
       <div
         css={`
@@ -212,17 +250,17 @@ function MintSection() {
   )
 }
 
-const FullScreen = styled.div`
-  position: absolute;
-  z-index: 1000;
-  width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  align-items: center;
-  justify-content: center;
-`
+const modalStyle = {
+  content: {
+    width: '100vw',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    margin: 0,
+    padding: 0,
+    backgroundColor: '#f9fafc',
+  },
+}
 
 const Left = styled.div`
   display: flex;
