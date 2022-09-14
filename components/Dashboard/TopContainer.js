@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
 
@@ -24,14 +24,12 @@ function TopContainer() {
     pricePerUnitReceived,
   } = useConvertInputs(bonded.symbol) // WXDAI
 
-  const mintPrice = (
-    pricePerUnitReceived *
-    (1 - entryTributePct / 100)
-  ).toFixed(2)
-  const burnPrice = (
-    (1 / pricePerUnitReceived) *
-    (1 - exitTributePct / 100)
-  ).toFixed(2)
+  const mintPrice = pricePerUnitReceived
+    ? (1 / pricePerUnitReceived).toFixed(2)
+    : 0
+  const burnPrice = pricePerUnitReceived
+    ? ((1 / pricePerUnitReceived) * (1 - exitTributePct / 100)).toFixed(2)
+    : 0
 
   return (
     <>

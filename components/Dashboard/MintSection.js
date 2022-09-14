@@ -132,7 +132,10 @@ function MintSection() {
         }}
       >
         <p>{type === 'mint' ? 'Mint Price' : 'Burn Price'}</p>
-        <EntryText>{type === 'mint' ? 'Entry' : 'Exit'} Tribute 8%</EntryText>
+        <EntryText>
+          {type === 'mint' ? 'Entry' : 'Exit'} Tribute{' '}
+          {type === 'mint' ? entryTributePct : exitTributePct}%
+        </EntryText>
       </SelectButton>
     )
   }

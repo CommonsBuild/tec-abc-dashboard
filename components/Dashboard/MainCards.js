@@ -1,10 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
 import { collateral, bonded } from '../../config'
+import { useBondingCurvePrice } from 'lib/web3-contracts'
+import { useConvertInputs } from './useConvertInputs'
+import { formatLocale } from 'utils'
+import { formatUnits } from 'lib/web3-utils'
 
 function MainCards() {
+  const {
+    reservePoolValue,
+    bondTotalSupply,
+    commonPoolBalance,
+  } = useBondingCurvePrice()
   const mainToken = bonded.symbol
   const collateralToken = collateral.symbol
+  const { pricePerUnitReceived } = useConvertInputs(bonded.symbol)
 
   const Card = ({ title, content, extraContent, icon, currency }) => {
     return (
@@ -16,7 +26,7 @@ function MainCards() {
             {'  '}
             <span style={{ color: 'white' }}>{currency}</span>
           </Content>
-          {extraContent && <ExtraContent>{extraContent}$</ExtraContent>}
+          {extraContent && <ExtraContent>${extraContent}</ExtraContent>}
         </div>
 
         <img
@@ -29,7 +39,7 @@ function MainCards() {
       </CardContainer>
     )
   }
-
+  // TODO: FETCH MARKET PRICE FROM EXTERNAL SOURCE price: 1 / pricePerUnitReceived,
   return (
     <div
       css={`
@@ -41,20 +51,51 @@ function MainCards() {
     >
       <Card
         title="CIRCULATING SUPPLY"
-        content="100"
-        extraContent={'100'}
+        content={
+          bondTotalSupply
+            ? formatLocale(bondTotalSupply).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
+        extraContent={
+          bondTotalSupply
+            ? (
+                (1 / pricePerUnitReceived) *
+                formatLocale(bondTotalSupply)
+              ).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
         icon="/icons/pool.svg"
         currency={mainToken}
       />
       <Card
         title="RESERVE"
-        content="100"
+        content={
+          reservePoolValue
+            ? formatLocale(reservePoolValue).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
         icon="/icons/reserve.svg"
         currency={collateralToken}
       />
       <Card
         title="COMMON POOL"
-        content="100"
+        content={
+          commonPoolBalance
+            ? formatLocale(commonPoolBalance).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
         icon="/icons/supply.svg"
         currency={collateralToken}
       />

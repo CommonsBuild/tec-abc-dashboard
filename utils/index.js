@@ -5,6 +5,11 @@ export function capitalizeFirstLetter(str) {
   return capitalized
 }
 
+export function formatLocale(value) {
+  if (!value) return
+  return parseFloat(formatUnits(value).replace(/,/g, ''))
+}
+
 export function formatNumber(num, digits = 4) {
   if (!num) return Number(0).toFixed(3)
   if (num < 1) {
