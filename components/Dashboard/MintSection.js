@@ -57,14 +57,6 @@ function MintSection() {
   const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
   const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
   const toBonded = select === 'mint' // ???
-
-  const {
-    price: bondingCurvePrice,
-    pricePerUnit: bondingCurvePricePerUnit,
-    entryTribute,
-    exitTribute,
-  } = useBondingCurvePrice(token1, toBonded)
-
   const {
     amountSource,
     inputValueRecipient,
@@ -78,6 +70,12 @@ function MintSection() {
     resetInputs,
     handleManualInputChange,
   } = useConvertInputs(options[1], toBonded) // WXDAI
+  const {
+    price: bondingCurvePrice,
+    pricePerUnit: bondingCurvePricePerUnit,
+    entryTribute,
+    exitTribute,
+  } = useBondingCurvePrice(amountSource, toBonded)
 
   console.log('AQUI', {
     amountSource,
@@ -86,12 +84,17 @@ function MintSection() {
     amountRetained,
     amountMinWithSlippage,
     amountMinWithSlippageFormatted,
+    pricePerUnitReceived,
+    bondingCurvePrice: formatUnits(bondingCurvePrice),
+    bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
+    entryTribute: formatUnits(entryTribute),
+    exitTribute: formatUnits(exitTribute),
   })
 
   useEffect(() => {
     if (!token0 && !token1) return
     handleManualInputChange(toBonded ? token0 : token1, toBonded)
-  }, [select])
+  }, [select, token0, token1])
 
   const mainTokenPrice = 1 / pricePerUnitReceived
 
