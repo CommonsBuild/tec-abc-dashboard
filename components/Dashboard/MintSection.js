@@ -8,6 +8,7 @@ import { useBondingCurvePrice, useTokenBalance } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber, formatWEI } from 'utils'
 import { collateral, bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
+import { formatUnits } from 'lib/web3-utils'
 import ManageConversion from './ManageConversion'
 
 const options = [collateral.symbol, bonded.symbol]
@@ -63,49 +64,34 @@ function MintSection() {
     entryTribute,
     exitTribute,
   } = useBondingCurvePrice(token1, toBonded)
+
   const {
     amountSource,
-    bindOtherInput,
-    bondingPriceLoading,
-    handleManualInputChange,
     inputValueRecipient,
     inputValueSource,
-    resetInputs,
     amountMinWithSlippage,
     amountMinWithSlippageFormatted,
     entryTributePct,
     exitTributePct,
     pricePerUnitReceived,
     amountRetained,
-  } = useConvertInputs(options[1]) // WXDAI
-  console.log({
+    resetInputs,
+    handleManualInputChange,
+  } = useConvertInputs(options[1], toBonded) // WXDAI
+
+  console.log('AQUI', {
     amountSource,
-    bindOtherInput,
-    bondingPriceLoading,
-    handleManualInputChange,
     inputValueRecipient,
     inputValueSource,
-    resetInputs,
+    amountRetained,
     amountMinWithSlippage,
     amountMinWithSlippageFormatted,
-    entryTributePct,
-    exitTributePct,
-    pricePerUnitReceived,
-    amountRetained,
   })
-  console.log({
-    bondingPriceLoading,
-    bondingCurvePrice,
-    bondingCurvePricePerUnit,
-    entryTribute: formatWEI(entryTribute),
-    exitTribute: formatWEI(exitTribute),
-  })
-  console.log({
-    TEC: formatWEI(token0Balance),
-    spendableTEC: formatWEI(spendable0Balance),
-    wXDAI: formatWEI(token1Balance),
-    spendableWXDAI: formatWEI(spendable1Balance),
-  })
+
+  useEffect(() => {
+    if (!token0 && !token1) return
+    handleManualInputChange(toBonded ? token0 : token1, toBonded)
+  }, [select])
 
   const mainTokenPrice = 1 / pricePerUnitReceived
 
@@ -129,6 +115,7 @@ function MintSection() {
         }}
         onClick={() => {
           setSelection(type)
+          resetInputs()
         }}
       >
         <p>{type === 'mint' ? 'Mint Price' : 'Burn Price'}</p>
@@ -149,8 +136,8 @@ function MintSection() {
           contentLabel="Conversion Modal"
         >
           <ManageConversion
-            toBonded={select === 'mint'}
-            fromAmount={'1'}
+            toBonded={toBonded}
+            fromAmount={amountSource}
             handleReturnHome={() => setStartTx(false)}
             minReturn={amountMinWithSlippage}
           />
@@ -199,6 +186,7 @@ function MintSection() {
           />
           <Button
             onClick={() => {
+              if (!acceptedTerms) return alert('please accept the terms')
               setStartTx(!startTx)
             }}
             css={`

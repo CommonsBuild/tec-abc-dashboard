@@ -13,6 +13,8 @@ import {
 import { Line } from 'react-chartjs-2'
 import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
+import { bonded } from '../../config'
+import { useConvertInputs } from './useConvertInputs'
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +30,17 @@ ChartJS.register(
 
 function HistoricalPrice({ chartData }) {
   const [data, setData] = useState(null)
+  const {
+    entryTributePct,
+    exitTributePct,
+    pricePerUnitReceived,
+  } = useConvertInputs(bonded.symbol) // WXDAI
+  const mintPrice = pricePerUnitReceived
+    ? (1 / pricePerUnitReceived).toFixed(2)
+    : 0
+  const burnPrice = pricePerUnitReceived
+    ? ((1 / pricePerUnitReceived) * (1 - exitTributePct / 100)).toFixed(2)
+    : 0
 
   useEffect(() => {
     if (chartData) {
@@ -121,8 +134,8 @@ function HistoricalPrice({ chartData }) {
             margin: 43.5px 0 0 0;
           `}
         >
-          <Display title="Mint" content={'2 USD'} />
-          <Display title="Burn" content={'0.80 USD'} />
+          <Display title="Mint" content={`${mintPrice} USD`} />
+          <Display title="Burn" content={`${burnPrice} USD`} />
         </div>
       </div>
     )

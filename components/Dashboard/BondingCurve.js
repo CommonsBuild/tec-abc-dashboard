@@ -13,6 +13,10 @@ import {
 import { Line } from 'react-chartjs-2'
 import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
+import { useBondingCurvePrice, useCollateral } from 'lib/web3-contracts'
+import { bonded } from '../../config'
+import { useConvertInputs } from './useConvertInputs'
+import { formatLocale } from 'utils'
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +32,13 @@ ChartJS.register(
 
 function BondingCurve({ chartData }) {
   const [data, setData] = useState(null)
+  const { pricePerUnitReceived } = useConvertInputs(bonded.symbol) // WXDAI
+  const { reservePoolValue } = useBondingCurvePrice()
+  const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
+  console.log({ virtualBalance, virtualSupply, reserveRatio })
+  const mintPrice = pricePerUnitReceived
+    ? (1 / pricePerUnitReceived).toFixed(2)
+    : 0
 
   useEffect(() => {
     if (chartData) {
@@ -163,9 +174,19 @@ function BondingCurve({ chartData }) {
             margin: 43.5px 0 0 0;
           `}
         >
-          <Display title="Token Price" content={'1.60 wxDAI'} />
-          <Display title="Reserve Balance" content={'743.340 wxDAI'} />
-          <Display title="Reserve Ratio" content={'19.98%'} />
+          <Display title="Token Price" content={`${mintPrice} WXDAI`} />
+          <Display
+            title="Reserve Balance"
+            content={`${
+              reservePoolValue
+                ? formatLocale(reservePoolValue).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : 0
+            } WXDAI`}
+          />
+          <Display title="Reserve Ratio" content={reserveRatio || 0} />
         </div>
       </div>
     )

@@ -35,8 +35,13 @@ function StepperTitle({ fromAmount, convertedTotal, status, toBonded }) {
     return (
       <>
         Convert {formattedFromAmount}{' '}
-        <span css={smallCaps}>{toBonded ? collateral.symbol : bonded.symbol}</span> to{' '}
-        <span css={smallCaps}>{toBonded ? bonded.symbol : collateral.symbol}</span>
+        <span css={smallCaps}>
+          {toBonded ? collateral.symbol : bonded.symbol}
+        </span>{' '}
+        to{' '}
+        <span css={smallCaps}>
+          {toBonded ? bonded.symbol : collateral.symbol}
+        </span>
       </>
     )
   } else if (status === STEPPER_SUCCESS) {
@@ -44,8 +49,13 @@ function StepperTitle({ fromAmount, convertedTotal, status, toBonded }) {
       <>
         You successfully converted <br />
         {formattedFromAmount}{' '}
-        <span css={smallCaps}>{toBonded ? collateral.symbol : bonded.symbol}</span> to {formattedTotal}{' '}
-        <span css={smallCaps}>{toBonded ? bonded.symbol : collateral.symbol}</span>
+        <span css={smallCaps}>
+          {toBonded ? collateral.symbol : bonded.symbol}
+        </span>{' '}
+        to {formattedTotal}{' '}
+        <span css={smallCaps}>
+          {toBonded ? bonded.symbol : collateral.symbol}
+        </span>
       </>
     )
   }
