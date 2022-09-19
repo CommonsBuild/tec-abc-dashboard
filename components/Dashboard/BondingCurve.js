@@ -35,7 +35,8 @@ function BondingCurve({ chartData }) {
   const { pricePerUnitReceived } = useConvertInputs(bonded.symbol) // WXDAI
   const { reservePoolValue } = useBondingCurvePrice()
   const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
-  console.log({ virtualBalance, virtualSupply, reserveRatio })
+
+  const collateralReserveRatio = reserveRatio / 1e4
   const mintPrice = pricePerUnitReceived
     ? (1 / pricePerUnitReceived).toFixed(2)
     : 0
@@ -186,7 +187,10 @@ function BondingCurve({ chartData }) {
                 : 0
             } WXDAI`}
           />
-          <Display title="Reserve Ratio" content={reserveRatio || 0} />
+          <Display
+            title="Reserve Ratio"
+            content={collateralReserveRatio ? `${collateralReserveRatio}%` : 0}
+          />
         </div>
       </div>
     )
