@@ -256,5 +256,32 @@
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "constant":true,
+    "inputs":[
+      {
+        "type":"uint256",
+        "name":"_supply"
+      },
+      {
+        "type":"uint256",
+        "name":"_balance"
+      },
+      {
+        "type":"uint32",
+        "name":"_reserveRatio"
+      }
+    ],
+    "name":"getStaticPricePPM",
+    "outputs":[
+      {
+        "type":"uint256",
+        "name":""
+      }
+    ],
+    "type":"function",
+    "stateMutability":"view",
+    "payable":false,
   }
 ]
