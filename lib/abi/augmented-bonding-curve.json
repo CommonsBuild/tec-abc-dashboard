@@ -282,6 +282,6 @@
     ],
     "type":"function",
     "stateMutability":"view",
-    "payable":false,
+    "payable":false
   }
 ]
