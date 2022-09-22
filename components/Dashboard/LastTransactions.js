@@ -1,8 +1,73 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import axios from 'axios'
 import styled from 'styled-components'
 import { MainTitle } from './Helpers'
 
 function LastTransactions() {
+  useEffect(() => {
+    const getData = async () => {
+      const endpoint = 'https://core-hsr.dune.com/v1/graphql'
+      const headers = {
+        'content-type': 'application/x-www-form-urlencoded',
+        accept: '*/*',
+        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'sec-gpc': '1',
+        'x-hasura-api-key': '',
+        'Access-Control-Allow-Origin': '*',
+        Referer: 'https://dune.com/',
+      }
+      const variables = {
+        query_id: 391372,
+        parameters: [
+          {
+            key: '1. Start Date',
+            type: 'datetime',
+            value: '2022-01-01 00:00:00',
+          },
+          {
+            key: '2. End Date',
+            type: 'datetime',
+            value: '2023-01-01 00:00:00',
+          },
+        ],
+      }
+      const graphqlQuery = {
+        operationName: 'GetResult',
+        query: `query GetResult($query_id: Int!, $parameters: [Parameter!]) {
+            get_result_v2(query_id: $query_id, parameters: $parameters) {
+              job_id    
+              result_id   
+              error_id    
+              __typename  
+            }
+          }`,
+        variables,
+      }
+      try {
+        // const response = await axios({
+        //   url: endpoint,
+        //   method: 'post',
+        //   headers: headers,
+        //   data: graphqlQuery,
+        // })
+        const response = await axios({
+          method: 'post',
+          url: endpoint,
+          headers: headers,
+          data: graphqlQuery,
+          withCredentials: false,
+        })
+        console.log({ response })
+      } catch (error) {
+        console.log({ error })
+      }
+    }
+    getData()
+  }, [])
+
   return (
     <div>
       <BigTitle>
