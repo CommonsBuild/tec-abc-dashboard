@@ -46,7 +46,6 @@ class handler(BaseHTTPRequestHandler):
 
     response_2 = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response_2.text)
     self.send_response(200)
     self.send_header('Content-type','text/plain')
     self.end_headers()

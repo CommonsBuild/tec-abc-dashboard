@@ -9,7 +9,7 @@ import HistoricalPrice from './HistoricalPrice'
 import LastTransactions from './LastTransactions'
 import BondingCurve from './BondingCurve'
 
-function Dashboard() {
+function Dashboard(props) {
   const [chartPriceVsBalance, setChartPriceVsBalance] = useState(null)
 
   useEffect(() => {
@@ -77,7 +77,7 @@ function Dashboard() {
         <Separator />
         <HistoricalPrice chartData={chartPriceVsBalance} />
         <Separator />
-        <LastTransactions />
+        <LastTransactions {...props} />
       </div>
     </div>
   )

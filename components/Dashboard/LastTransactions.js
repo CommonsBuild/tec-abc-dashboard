@@ -1,72 +1,73 @@
-import React, { useEffect } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
+import ReactPaginate from 'react-paginate'
+import { shortenAddress } from 'lib/web3-utils'
 import { MainTitle } from './Helpers'
 
-function LastTransactions() {
+const Items = ({ currentItems }) => {
+  if (!currentItems) return
+  return (
+    <>
+      {currentItems?.map(i => {
+        const [txData, setTxData] = useState(null)
+        const { data } = i
+        const txHash = data?.tx_hash?.match(/href="([^"]*)/)[1]?.split('/')[6]
+
+        useEffect(() => {
+          fetch(
+            `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
+          )
+            .then(response => response.json())
+            .then(res => {
+              setTxData(res)
+            })
+        }, [txHash])
+
+        return (
+          <tr>
+            <td>{txData?.result ? shortenAddress(txData.result.from) : '-'}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
+            <td>{data.price_per_token.toFixed(2) || 0}</td>
+            <td>{data.tribute.toFixed(2) || 0}</td>
+            <td>{`${data.amountBought.toFixed(2)} TEC` || 0}</td>
+            <td>-</td>
+            <td>{i?.data.action || ''}</td>
+          </tr>
+        )
+      })}
+    </>
+  )
+}
+
+function LastTransactions({ transactions }) {
+  console.log({ transactions })
+  const itemsPerPage = 10
+  const items = transactions
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState(null)
+  const [pageCount, setPageCount] = useState(0)
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0)
+
   useEffect(() => {
-    const getData = async () => {
-      const endpoint = 'https://core-hsr.dune.com/v1/graphql'
-      const headers = {
-        'content-type': 'application/x-www-form-urlencoded',
-        accept: '*/*',
-        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-site',
-        'sec-gpc': '1',
-        'x-hasura-api-key': '',
-        'Access-Control-Allow-Origin': '*',
-        Referer: 'https://dune.com/',
-      }
-      const variables = {
-        query_id: 391372,
-        parameters: [
-          {
-            key: '1. Start Date',
-            type: 'datetime',
-            value: '2022-01-01 00:00:00',
-          },
-          {
-            key: '2. End Date',
-            type: 'datetime',
-            value: '2023-01-01 00:00:00',
-          },
-        ],
-      }
-      const graphqlQuery = {
-        operationName: 'GetResult',
-        query: `query GetResult($query_id: Int!, $parameters: [Parameter!]) {
-            get_result_v2(query_id: $query_id, parameters: $parameters) {
-              job_id    
-              result_id   
-              error_id    
-              __typename  
-            }
-          }`,
-        variables,
-      }
-      try {
-        // const response = await axios({
-        //   url: endpoint,
-        //   method: 'post',
-        //   headers: headers,
-        //   data: graphqlQuery,
-        // })
-        const response = await axios({
-          method: 'post',
-          url: endpoint,
-          headers: headers,
-          data: graphqlQuery,
-          withCredentials: false,
-        })
-        console.log({ response })
-      } catch (error) {
-        console.log({ error })
-      }
-    }
-    getData()
-  }, [])
+    // Fetch items from another resources.
+    const endOffset = itemOffset + itemsPerPage
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
+    setCurrentItems(items.slice(itemOffset, endOffset))
+    setPageCount(Math.ceil(items.length / itemsPerPage))
+  }, [itemOffset, itemsPerPage])
+
+  // Invoke when user click to request another page.
+  const handlePageClick = event => {
+    const newOffset = (event.selected * itemsPerPage) % items.length
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    )
+    setItemOffset(newOffset)
+  }
 
   return (
     <div>
@@ -78,30 +79,31 @@ function LastTransactions() {
           <tbody>
             <tr>
               <th>Account</th>
-              <th>Reserve</th>
+              <th>Reserve {`(wxDAI)`}</th>
               <th>Total Supply {`(TEC)`}</th>
               <th>Amount In</th>
               <th>Price</th>
               <th>Tribute</th>
               <th>Amount Out</th>
               <th>New Price</th>
+              <th>Action</th>
             </tr>
-            {[1, 2, 3, 4, 5, 6].map(i => {
-              return (
-                <tr>
-                  <td>0x0000...0000</td>
-                  <td>1000 wxDAI</td>
-                  <td>1000</td>
-                  <td>100000 wxDAI</td>
-                  <td>1.00</td>
-                  <td>100000</td>
-                  <td>10000 TEC</td>
-                  <td>1.38</td>
-                </tr>
-              )
-            })}
+            <Items currentItems={currentItems} />
           </tbody>
         </table>
+        <StyledPaginateContainer>
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="next >"
+            breakClassName="break-me"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="< previous"
+            renderOnZeroPageCount={null}
+            activeClassName="active"
+          />
+        </StyledPaginateContainer>
       </TableContainer>
     </div>
   )
@@ -149,6 +151,26 @@ const TableContainer = styled.div`
   td {
     text-align: left;
     border-bottom: 1px solid white;
+  }
+`
+
+const StyledPaginateContainer = styled.div`
+  .pagination {
+    color: #0366d6;
+  }
+  .break-me {
+    cursor: default;
+  }
+  .active {
+    border-color: transparent;
+    background-color: #d2f67b;
+    color: black;
+  }
+  ul {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin: 20px 0 0 0;
   }
 `
 

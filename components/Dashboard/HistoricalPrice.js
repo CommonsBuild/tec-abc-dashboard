@@ -30,6 +30,7 @@ ChartJS.register(
 
 function HistoricalPrice({ chartData }) {
   const [data, setData] = useState(null)
+
   const {
     entryTributePct,
     exitTributePct,

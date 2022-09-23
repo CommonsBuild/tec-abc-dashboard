@@ -77,19 +77,19 @@ function MintSection() {
     exitTribute,
   } = useBondingCurvePrice(amountSource, toBonded)
 
-  console.log('AQUI', {
-    amountSource,
-    inputValueRecipient,
-    inputValueSource,
-    amountRetained,
-    amountMinWithSlippage,
-    amountMinWithSlippageFormatted,
-    pricePerUnitReceived,
-    bondingCurvePrice: formatUnits(bondingCurvePrice),
-    bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
-    entryTribute: formatUnits(entryTribute),
-    exitTribute: formatUnits(exitTribute),
-  })
+  // console.log('AQUI', {
+  //   amountSource,
+  //   inputValueRecipient,
+  //   inputValueSource,
+  //   amountRetained,
+  //   amountMinWithSlippage,
+  //   amountMinWithSlippageFormatted,
+  //   pricePerUnitReceived,
+  //   bondingCurvePrice: formatUnits(bondingCurvePrice),
+  //   bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
+  //   entryTribute: formatUnits(entryTribute),
+  //   exitTribute: formatUnits(exitTribute),
+  // })
 
   useEffect(() => {
     if (!token0 && !token1) return
