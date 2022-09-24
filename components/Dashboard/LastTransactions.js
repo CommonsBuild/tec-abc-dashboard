@@ -5,27 +5,62 @@ import { shortenAddress } from 'lib/web3-utils'
 import { MainTitle } from './Helpers'
 
 const Items = ({ currentItems }) => {
-  if (!currentItems) return
+  const [items, setItems] = useState(null)
+  const getTx = async txHash => {
+    return fetch(
+      `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
+    )
+      .then(response => response.json())
+      .then(res => res)
+  }
+
+  useEffect(() => {
+    const getHashes = async () => {
+      if (!currentItems) return
+      let itemsArray = []
+      await Promise.all(
+        currentItems.map(async i => {
+          const { data } = i
+          const txHash = data?.tx_hash?.match(/href="([^"]*)/)[1]?.split('/')[6]
+          const hash = await getTx(txHash)
+          itemsArray.push({ ...data, hash })
+        })
+      )
+      setItems(itemsArray)
+    }
+    getHashes()
+  }, [currentItems])
+
+  return items
+    ? items.map(data => {
+        return (
+          <tr>
+            <td>{data?.hash ? shortenAddress(data.hash.result.from) : '-'}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
+            <td>{data.price_per_token.toFixed(2) || 0}</td>
+            <td>{data.tribute.toFixed(2) || 0}</td>
+            <td>{`${data.amountBought.toFixed(2)} TEC` || 0}</td>
+            <td>-</td>
+            <td>{data.action || ''}</td>
+          </tr>
+        )
+      })
+    : null
   return (
     <>
       {currentItems?.map(i => {
         const [txData, setTxData] = useState(null)
         const { data } = i
         const txHash = data?.tx_hash?.match(/href="([^"]*)/)[1]?.split('/')[6]
-
-        useEffect(() => {
-          fetch(
-            `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
-          )
-            .then(response => response.json())
-            .then(res => {
-              setTxData(res)
-            })
-        }, [txHash])
-
         return (
           <tr>
-            <td>{txData?.result ? shortenAddress(txData.result.from) : '-'}</td>
+            <td>
+              {txData && txData?.result
+                ? shortenAddress(txData.result.from)
+                : '-'}
+            </td>
             <td>-</td>
             <td>-</td>
             <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
