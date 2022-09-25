@@ -3,52 +3,54 @@ from http.server import BaseHTTPRequestHandler
 from pandas import json_normalize, to_datetime
 import json
 
+def get_result_id(query_id):
+    url = "https://core-hsr.dune.com/v1/graphql"
+    payload = json.dumps({
+    "operationName": "GetResult",
+    "variables": {
+        "query_id": query_id,
+        "parameters": [
+        {
+            "key": "1. Start Date",
+            "type": "datetime",
+            "value": "2022-01-01 00:00:00"
+        },
+        {
+            "key": "2. End Date",
+            "type": "datetime",
+            "value": "2025-01-01 00:00:00"
+        }
+        ]
+    },
+    "query": "query GetResult($query_id: Int!, $parameters: [Parameter!]) {\n  get_result_v2(query_id: $query_id, parameters: $parameters) {\n    job_id\n    result_id\n    error_id\n    __typename\n  }\n}\n"
+    })
+    headers = {
+    'content-type': 'application/json',
+    'x-hasura-api-key': ''
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return json.loads(response.text)['data']['get_result_v2']['result_id']
+
+def find_data_by_result(result_id):
+    url = "https://core-hsr.dune.com/v1/graphql"
+    payload = "{\"operationName\":\"FindResultDataByResult\",\"variables\":{\"result_id\":\""+result_id+"\",\"error_id\":\"00000000-0000-0000-0000-000000000000\"},\"query\":\"query FindResultDataByResult($result_id: uuid!, $error_id: uuid!) {\\n  query_results(where: {id: {_eq: $result_id}}) {\\n    id\\n    job_id\\n    runtime\\n    generated_at\\n    columns\\n    __typename\\n  }\\n  query_errors(where: {id: {_eq: $error_id}}) {\\n    id\\n    job_id\\n    runtime\\n    message\\n    metadata\\n    type\\n    generated_at\\n    __typename\\n  }\\n  get_result_by_result_id(args: {want_result_id: $result_id}) {\\n    data\\n    __typename\\n  }\\n}\\n\"}"
+    headers = {
+    'x-hasura-api-key': '',
+    'Content-Type': 'text/plain'
+    }
+    return requests.request("POST", url, headers=headers, data=payload)
+
+def get_monthly_mean(data):
+    df = json_normalize(data)
+    df['data.block_time'] = to_datetime(df['data.block_time'], errors='coerce')
+    monthly_avg = df.groupby(df['data.block_time'].dt.month)['data.price_per_token'].mean()
+    return json.loads(monthly_avg.to_json())
+
+
 class handler(BaseHTTPRequestHandler):
   def do_GET(self):
-    url = "https://core-hsr.dune.com/v1/graphql"
-    def get_result_id(query_id):
-        payload = json.dumps({
-        "operationName": "GetResult",
-        "variables": {
-            "query_id": query_id,
-            "parameters": [
-            {
-                "key": "1. Start Date",
-                "type": "datetime",
-                "value": "2022-01-01 00:00:00"
-            },
-            {
-                "key": "2. End Date",
-                "type": "datetime",
-                "value": "2025-01-01 00:00:00"
-            }
-            ]
-        },
-        "query": "query GetResult($query_id: Int!, $parameters: [Parameter!]) {\n  get_result_v2(query_id: $query_id, parameters: $parameters) {\n    job_id\n    result_id\n    error_id\n    __typename\n  }\n}\n"
-        })
-        headers = {
-        'content-type': 'application/json',
-        'x-hasura-api-key': ''
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        return json.loads(response.text)['data']['get_result_v2']['result_id']
-
-    def find_data_by_result(result_id):
-        payload = "{\"operationName\":\"FindResultDataByResult\",\"variables\":{\"result_id\":\""+result_id+"\",\"error_id\":\"00000000-0000-0000-0000-000000000000\"},\"query\":\"query FindResultDataByResult($result_id: uuid!, $error_id: uuid!) {\\n  query_results(where: {id: {_eq: $result_id}}) {\\n    id\\n    job_id\\n    runtime\\n    generated_at\\n    columns\\n    __typename\\n  }\\n  query_errors(where: {id: {_eq: $error_id}}) {\\n    id\\n    job_id\\n    runtime\\n    message\\n    metadata\\n    type\\n    generated_at\\n    __typename\\n  }\\n  get_result_by_result_id(args: {want_result_id: $result_id}) {\\n    data\\n    __typename\\n  }\\n}\\n\"}"
-        headers = {
-        'x-hasura-api-key': '',
-        'Content-Type': 'text/plain'
-        }
-        return requests.request("POST", url, headers=headers, data=payload)
-
-    def get_monthly_mean(data):
-        df = json_normalize(data)
-        df['data.block_time'] = to_datetime(df['data.block_time'], errors='coerce')
-        monthly_avg = df.groupby(df['data.block_time'].dt.month)['data.price_per_token'].mean()
-        return json.loads(monthly_avg.to_json())
-
     burn_result_id = get_result_id(421552)
     burn_response = find_data_by_result(burn_result_id)
 
