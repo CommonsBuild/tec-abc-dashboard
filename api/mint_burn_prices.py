@@ -1,6 +1,6 @@
 from pip._vendor import requests
 from http.server import BaseHTTPRequestHandler
-import pandas as pd
+from pandas import json_normalize, to_datetime
 import json
 
 class handler(BaseHTTPRequestHandler):
@@ -44,8 +44,8 @@ class handler(BaseHTTPRequestHandler):
         return requests.request("POST", url, headers=headers, data=payload)
 
     def get_monthly_mean(data):
-        df = pd.json_normalize(data)
-        df['data.block_time'] = pd.to_datetime(df['data.block_time'], errors='coerce')
+        df = json_normalize(data)
+        df['data.block_time'] = to_datetime(df['data.block_time'], errors='coerce')
         monthly_avg = df.groupby(df['data.block_time'].dt.month)['data.price_per_token'].mean()
         return json.loads(monthly_avg.to_json())
 
