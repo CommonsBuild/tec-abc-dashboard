@@ -28,8 +28,9 @@ ChartJS.register(
   Legend
 )
 
-function HistoricalPrice({ chartData }) {
+function HistoricalPrice({ mintBurnPrices, chartData }) {
   const [data, setData] = useState(null)
+  console.log({ chartData })
 
   const {
     entryTributePct,
@@ -44,15 +45,14 @@ function HistoricalPrice({ chartData }) {
     : 0
 
   useEffect(() => {
-    if (chartData) {
-      const { price, balanceInThousands } = chartData
+    if (mintBurnPrices) {
+      const { burn, mint } = mintBurnPrices
       setData({
-        labels: balanceInThousands,
         datasets: [
           {
             label: 'Price',
             fill: 'start',
-            data: price,
+            data: burn,
             borderColor: '#03B3FF',
             pointBackgroundColor: '#03B3FF',
             pointHoverRadius: 2,
@@ -62,7 +62,7 @@ function HistoricalPrice({ chartData }) {
           {
             label: 'Price',
             fill: 'start',
-            data: price.map(i => i / 2),
+            data: mint,
             borderColor: '#F56969',
             pointBackgroundColor: '#F56969',
             pointHoverRadius: 2,
@@ -72,7 +72,7 @@ function HistoricalPrice({ chartData }) {
         ],
       })
     }
-  }, [chartData])
+  }, [mintBurnPrices])
 
   const options = {
     responsive: true,
@@ -98,7 +98,7 @@ function HistoricalPrice({ chartData }) {
         ticks: {
           color: '#FFFFFF',
           callback(value) {
-            return `${value}K`
+            return `${value}`
           },
         },
       },
@@ -149,8 +149,8 @@ function HistoricalPrice({ chartData }) {
         <ChartGrid
           id="Bonding Curve"
           chart={<Line data={data} options={options} />}
-          xAxisLabel={<ChartAxisLabel label="time (days)" />}
-          yAxisLabel={<ChartAxisLabel label="price of 1 tec (USD" rotate />}
+          xAxisLabel={<ChartAxisLabel label="time (month)" />}
+          yAxisLabel={<ChartAxisLabel label="price of 1 tec (USD)" rotate />}
         />
       </div>
     )

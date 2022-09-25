@@ -56,7 +56,7 @@ function MintSection() {
   const { account } = useWalletAugmented()
   const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
   const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
-  const toBonded = select === 'mint' // ???
+  const toBonded = select === 'mint'
   const {
     amountSource,
     inputValueRecipient,
@@ -77,19 +77,28 @@ function MintSection() {
     exitTribute,
   } = useBondingCurvePrice(amountSource, toBonded)
 
-  // console.log('AQUI', {
-  //   amountSource,
-  //   inputValueRecipient,
-  //   inputValueSource,
-  //   amountRetained,
-  //   amountMinWithSlippage,
-  //   amountMinWithSlippageFormatted,
-  //   pricePerUnitReceived,
-  //   bondingCurvePrice: formatUnits(bondingCurvePrice),
-  //   bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
-  //   entryTribute: formatUnits(entryTribute),
-  //   exitTribute: formatUnits(exitTribute),
-  // })
+  const chartValues = {
+    a: toBonded
+      ? collateralToken
+      : `${100 - exitTributePct}% ${collateralToken}`,
+    b: toBonded ? `${entryTributePct}%` : `${exitTributePct}%`,
+    c: mainToken,
+    d: toBonded ? `${100 - entryTributePct}%` : `${100 - exitTributePct}%`,
+  }
+
+  console.log('AQUI', {
+    amountSource,
+    inputValueRecipient,
+    inputValueSource,
+    amountRetained,
+    amountMinWithSlippage,
+    amountMinWithSlippageFormatted,
+    pricePerUnitReceived,
+    bondingCurvePrice: formatUnits(bondingCurvePrice),
+    bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
+    entryTribute: formatUnits(entryTribute),
+    exitTribute: formatUnits(exitTribute),
+  })
 
   useEffect(() => {
     if (!token0 && !token1) return
@@ -220,8 +229,30 @@ function MintSection() {
         </Left>
         <Right>
           <Chart>
-            <Image src="/images/flowchart.svg" width="511px" height="355px" />
-            <ChartValues>
+            {toBonded ? (
+              <Image
+                src="/images/flowchart_mint.png"
+                width="461px"
+                height="335px"
+              />
+            ) : (
+              <Image
+                src="/images/flowchart_burn.png"
+                width="461px"
+                height="335px"
+              />
+            )}
+            <ChartSecondaryValues>
+              <div>
+                <p>{chartValues.a}</p>
+                <p>{chartValues.b}</p>
+              </div>
+              <div>
+                <p>{chartValues.c}</p>
+                <p>{chartValues.d}</p>
+              </div>
+            </ChartSecondaryValues>
+            <ChartMainValues>
               <PoolValue>
                 <p>{formatNumber(token0 ? token0 * commonPercentage : 0)}</p>
                 <p>WXDAI</p>
@@ -230,7 +261,7 @@ function MintSection() {
                 <p>{formatNumber(token0 ? token0 * reservePercentage : 0)}</p>
                 <p>WXDAI</p>
               </PoolValue>
-            </ChartValues>
+            </ChartMainValues>
           </Chart>
 
           <NewPrice>
@@ -278,7 +309,7 @@ const Right = styled.div`
 `
 const Chart = styled.div`
   flex-direction: column;
-  margin: 0 0 0 40px;
+  margin: -10px 0 0 40px;
 `
 
 const MainButtons = styled.div`
@@ -405,14 +436,52 @@ const InputContainer = styled.div`
   }
 `
 
-const ChartValues = styled.div`
+const ChartMainValues = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   color: white;
   width: 511px;
-  margin: -40px 0;
-  padding: 0 19px;
+  margin: -8px 0;
+  padding: 0 46px 0 0;
+`
+
+const ChartSecondaryValues = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 100%;
+  height: 235px;
+  margin: -286px 0;
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+  div:first-child {
+    height: 70%;
+    margin: 0 0 0 -210px;
+  }
+  div:nth-child(2) {
+    height: 70%;
+    margin: 0 0 0 110px;
+  }
+  p {
+    width: 77px;
+    height: 27px;
+    font-weight: 500;
+    font-size: 13.4179px;
+    line-height: 17px;
+    color: #d2f67b;
+    padding: 5px 0 0 0;
+  }
+  p:first-child {
+    font-size: 10.4179px;
+  }
 `
 
 const PoolValue = styled.div`

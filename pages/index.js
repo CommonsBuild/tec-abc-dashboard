@@ -2,6 +2,7 @@ import React from 'react'
 import Dashboard from '../components/Dashboard'
 
 export default props => {
+  console.log({ props })
   return <Dashboard {...props} />
 }
 
@@ -13,11 +14,15 @@ export async function getServerSideProps(context) {
   const transactions = await fetch(`${path}/api/transactions`).then(res =>
     res.json()
   )
+  const mintBurnPrices = await fetch(`${path}/api/mint_burn_prices`).then(res =>
+    res.json()
+  )
   return {
     props: {
       transactions: transactions
         ? transactions.data.get_result_by_result_id
         : null,
+      mintBurnPrices: mintBurnPrices,
     },
   }
 }
