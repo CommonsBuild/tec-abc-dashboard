@@ -48,32 +48,6 @@ const Items = ({ currentItems }) => {
         )
       })
     : null
-  return (
-    <>
-      {currentItems?.map(i => {
-        const [txData, setTxData] = useState(null)
-        const { data } = i
-        const txHash = data?.tx_hash?.match(/href="([^"]*)/)[1]?.split('/')[6]
-        return (
-          <tr>
-            <td>
-              {txData && txData?.result
-                ? shortenAddress(txData.result.from)
-                : '-'}
-            </td>
-            <td>-</td>
-            <td>-</td>
-            <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
-            <td>{data.price_per_token.toFixed(2) || 0}</td>
-            <td>{data.tribute.toFixed(2) || 0}</td>
-            <td>{`${data.amountBought.toFixed(2)} TEC` || 0}</td>
-            <td>-</td>
-            <td>{i?.data.action || ''}</td>
-          </tr>
-        )
-      })}
-    </>
-  )
 }
 
 function LastTransactions({ transactions }) {
