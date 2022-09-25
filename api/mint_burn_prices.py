@@ -1,4 +1,4 @@
-import requests
+from pip._vendor import requests
 import pandas as pd
 from http.server import BaseHTTPRequestHandler
 import json
