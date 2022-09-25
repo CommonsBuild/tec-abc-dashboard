@@ -1,12 +1,11 @@
 from pip._vendor import requests
-import pandas as pd
 from http.server import BaseHTTPRequestHandler
+import pandas as pd
 import json
 
 class handler(BaseHTTPRequestHandler):
   def do_GET(self):
     url = "https://core-hsr.dune.com/v1/graphql"
-
     def get_result_id(query_id):
         payload = json.dumps({
         "operationName": "GetResult",
