@@ -234,12 +234,16 @@ function MintSection() {
                 src="/images/flowchart_mint.png"
                 width="461px"
                 height="335px"
+                placeholder="blur"
+                blurDataURL="/images/tec.png"
               />
             ) : (
               <Image
                 src="/images/flowchart_burn.png"
                 width="461px"
                 height="335px"
+                placeholder="blur"
+                blurDataURL="/images/tec.png"
               />
             )}
             <ChartSecondaryValues>
