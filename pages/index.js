@@ -10,7 +10,7 @@ export async function getServerSideProps(context) {
   const path =
     process.env.NEXT_PUBLIC_ENV === 'develop'
       ? 'http://localhost:3000'
-      : 'https://convert.tecommons.org'
+      : 'https://tec-abc-dashboard.vercel.app'
   const transactions = await fetch(`${path}/api/transactions`).then(res =>
     res.json()
   )
