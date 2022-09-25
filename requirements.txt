@@ -1,5 +1,6 @@
 certifi==2022.9.14
 charset-normalizer==2.1.1
+Cython==0.29.32
 distlib==0.3.6
 filelock==3.8.0
 idna==3.4
