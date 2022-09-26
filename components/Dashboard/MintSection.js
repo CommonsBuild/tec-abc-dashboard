@@ -4,8 +4,12 @@ import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
 import { useWalletAugmented } from 'lib/wallet'
-import { useBondingCurvePrice, useTokenBalance } from 'lib/web3-contracts'
-import { capitalizeFirstLetter, formatNumber, formatWEI } from 'utils'
+import {
+  useBondingCurvePrice,
+  useTokenBalance,
+  getNewMintPrice,
+} from 'lib/web3-contracts'
+import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
 import { formatUnits } from 'lib/web3-utils'
@@ -51,12 +55,12 @@ function MintSection() {
   const [token1, setToken1] = useState(0)
   const mainToken = bonded.symbol
   const collateralToken = collateral.symbol
-  const reservePercentage = 0.92
-  const commonPercentage = 0.08
   const { account } = useWalletAugmented()
   const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
   const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
+
   const toBonded = select === 'mint'
+
   const {
     amountSource,
     inputValueRecipient,
@@ -77,6 +81,13 @@ function MintSection() {
     exitTribute,
   } = useBondingCurvePrice(amountSource, toBonded)
 
+  const reservePercentage = toBonded
+    ? (100 - entryTributePct) / 100
+    : (100 - exitTributePct) / 100
+  const commonPercentage = toBonded
+    ? entryTributePct / 100
+    : exitTributePct / 100
+
   const chartValues = {
     a: toBonded
       ? collateralToken
@@ -85,8 +96,9 @@ function MintSection() {
     c: mainToken,
     d: toBonded ? `${100 - entryTributePct}%` : `${100 - exitTributePct}%`,
   }
+  const newMintPrice = getNewMintPrice()
 
-  console.log('AQUI', {
+  console.log('HERE', {
     amountSource,
     inputValueRecipient,
     inputValueSource,
@@ -101,11 +113,15 @@ function MintSection() {
   })
 
   useEffect(() => {
-    if (!token0 && !token1) return
+    if (!token0 || !token1) return
     handleManualInputChange(toBonded ? token0 : token1, toBonded)
   }, [select, token0, token1])
 
   const mainTokenPrice = 1 / pricePerUnitReceived
+
+  useEffect(() => {
+    setToken0((token1 * mainTokenPrice).toFixed(1))
+  }, [pricePerUnitReceived])
 
   const checkEmptyVal = val => {
     if (!val || Number(val) < 0) {
