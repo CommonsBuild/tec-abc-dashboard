@@ -72,9 +72,6 @@ function LastTransactions({ transactions }) {
   // Invoke when user click to request another page.
   const handlePageClick = event => {
     const newOffset = (event.selected * itemsPerPage) % items.length
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`
-    )
     setItemOffset(newOffset)
   }
 
@@ -103,12 +100,12 @@ function LastTransactions({ transactions }) {
         <StyledPaginateContainer>
           <ReactPaginate
             breakLabel="..."
-            nextLabel="next >"
+            nextLabel=">"
             breakClassName="break-me"
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
             pageCount={pageCount}
-            previousLabel="< previous"
+            previousLabel="<"
             renderOnZeroPageCount={null}
             activeClassName="active"
           />
@@ -131,7 +128,6 @@ const TableContainer = styled.div`
   background: #313131;
   border-radius: 11px;
   color: white;
-  margin: 16px 0 0 0;
   padding: 39px;
 
   table {
@@ -164,22 +160,61 @@ const TableContainer = styled.div`
 `
 
 const StyledPaginateContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 25px 0 0 0;
+  a {
+    display: flex;
+    width: 32px;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #f1f3f7 !important;
+    padding: 6px;
+  }
   .pagination {
     color: #0366d6;
   }
   .break-me {
     cursor: default;
+    align-self: flex-end;
+    a {
+      border: none !important;
+    }
+  }
+  .break-me:hover {
+    a {
+      border: none !important;
+    }
   }
   .active {
-    border-color: transparent;
-    background-color: #d2f67b;
-    color: black;
+    a {
+      color: #d2f67b !important;
+      border: 2px solid #d2f67b !important;
+    }
   }
   ul {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 4px;
     margin: 20px 0 0 0;
+  }
+  li:first-child,
+  li:last-child {
+    a {
+      border: none !important;
+      color: #f1f3f7 !important;
+      text-decoration: none;
+    }
+  }
+  li:hover {
+    * {
+      cursor: pointer;
+      color: #d2f67b !important;
+      border: 2px solid #d2f67b !important;
+      text-decoration: none;
+    }
   }
 `
 
