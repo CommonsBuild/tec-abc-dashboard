@@ -7,7 +7,7 @@ import { useWalletAugmented } from 'lib/wallet'
 import {
   useBondingCurvePrice,
   useTokenBalance,
-  getNewMintPrice,
+  // getNewMintPrice,
 } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
@@ -96,7 +96,7 @@ function MintSection() {
     c: mainToken,
     d: toBonded ? `${100 - entryTributePct}%` : `${100 - exitTributePct}%`,
   }
-  const newMintPrice = getNewMintPrice()
+  // const newMintPrice = getNewMintPrice()
 
   console.log('HERE', {
     amountSource,
