@@ -121,6 +121,7 @@ const BigTitle = styled.div`
   background: #313131;
   border-radius: 11px;
   padding: 32px 27px;
+  margin: 0 0 16px 0;
 `
 
 const TableContainer = styled.div`

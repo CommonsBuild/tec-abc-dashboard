@@ -10,6 +10,7 @@ import frame from './provider-icons/frame.svg'
 import metamask from './provider-icons/metamask.svg'
 import colors from '../../utils/colors'
 import lightning from './lightning.svg'
+import Image from 'next/image'
 
 function AccountModule() {
   const { account } = useWalletAugmented()
@@ -133,7 +134,7 @@ function ProviderButton({ name, onActivate, image }) {
         }
       `}
     >
-      <img src={image} alt="" height="42px" />
+      <Image src={image} alt="" width="42px" height="42px" />
       <div
         css={`
           margin-top: 8px;

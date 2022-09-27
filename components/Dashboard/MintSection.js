@@ -7,7 +7,7 @@ import { useWalletAugmented } from 'lib/wallet'
 import {
   useBondingCurvePrice,
   useTokenBalance,
-  // getNewMintPrice,
+  useGetNewMintPrice,
 } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
@@ -96,32 +96,38 @@ function MintSection() {
     c: mainToken,
     d: toBonded ? `${100 - entryTributePct}%` : `${100 - exitTributePct}%`,
   }
-  // const newMintPrice = getNewMintPrice()
+  const amountToReserve = token0 && token0 * reservePercentage
+  const amountToCommon = token0 && token0 * commonPercentage
 
-  console.log('HERE', {
-    amountSource,
-    inputValueRecipient,
-    inputValueSource,
-    amountRetained,
-    amountMinWithSlippage,
-    amountMinWithSlippageFormatted,
-    pricePerUnitReceived,
-    bondingCurvePrice: formatUnits(bondingCurvePrice),
-    bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
-    entryTribute: formatUnits(entryTribute),
-    exitTribute: formatUnits(exitTribute),
-  })
+  const fullTokenMint = inputValueRecipient + amountRetained
 
+  const [newMintPrice] = useGetNewMintPrice(fullTokenMint, token0, toBonded)
+
+  // console.log('HERE', {
+  //   amountSource,
+  //   inputValueRecipient,
+  //   inputValueSource,
+  //   amountRetained,
+  //   amountMinWithSlippage,
+  //   amountMinWithSlippageFormatted,
+  //   pricePerUnitReceived,
+  //   bondingCurvePrice: formatUnits(bondingCurvePrice),
+  //   bondingCurvePricePerUnit: 1 / formatUnits(bondingCurvePricePerUnit),
+  //   entryTribute: formatUnits(entryTribute),
+  //   exitTribute: formatUnits(exitTribute),
+  //   newMintPrice,
+  // })
+
+  const mainTokenPrice = pricePerUnitReceived && 1 / pricePerUnitReceived
   useEffect(() => {
     if (!token0 || !token1) return
     handleManualInputChange(toBonded ? token0 : token1, toBonded)
-  }, [select, token0, token1])
-
-  const mainTokenPrice = 1 / pricePerUnitReceived
+  }, [token0, token1])
 
   useEffect(() => {
+    if (!token1 || !mainTokenPrice) return
     setToken0((token1 * mainTokenPrice).toFixed(1))
-  }, [pricePerUnitReceived])
+  }, [select, mainTokenPrice])
 
   const checkEmptyVal = val => {
     if (!val || Number(val) < 0) {
@@ -274,11 +280,11 @@ function MintSection() {
             </ChartSecondaryValues>
             <ChartMainValues>
               <PoolValue>
-                <p>{formatNumber(token0 ? token0 * commonPercentage : 0)}</p>
+                <p>{formatNumber(token0 ? amountToCommon : 0)}</p>
                 <p>WXDAI</p>
               </PoolValue>
               <PoolValue>
-                <p>{formatNumber(token0 ? token0 * reservePercentage : 0)}</p>
+                <p>{formatNumber(token0 ? amountToReserve : 0)}</p>
                 <p>WXDAI</p>
               </PoolValue>
             </ChartMainValues>
@@ -287,7 +293,7 @@ function MintSection() {
           <NewPrice>
             <p>New Mint Price</p>
             <div />
-            <p>$0.00</p>
+            <p>${parseFloat(newMintPrice)?.toFixed(3)}</p>
           </NewPrice>
         </Right>
       </div>
