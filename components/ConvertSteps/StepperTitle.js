@@ -34,13 +34,12 @@ function StepperTitle({ fromAmount, convertedTotal, status, toBonded }) {
   if (status === STEPPER_IN_PROGRESS || status === STEPPER_ERROR) {
     return (
       <>
-        Convert {formattedFromAmount}{' '}
         <span css={smallCaps}>
+          Convert {formattedFromAmount}{' '}
           {toBonded ? collateral.symbol : bonded.symbol}
         </span>{' '}
-        to{' '}
         <span css={smallCaps}>
-          {toBonded ? bonded.symbol : collateral.symbol}
+          to {toBonded ? bonded.symbol : collateral.symbol}
         </span>
       </>
     )

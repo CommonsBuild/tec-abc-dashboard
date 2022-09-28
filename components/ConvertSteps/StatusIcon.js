@@ -12,6 +12,7 @@ import {
   STEP_SUCCESS,
   STEP_ERROR,
 } from './stepper-statuses'
+import Image from 'next/image'
 
 const STATUS_ICONS = {
   [STEP_WAITING]: waitingIcon,
@@ -31,16 +32,15 @@ function renderPipIfErrorOrSuccess(status) {
   return (
     <>
       {pipImage && (
-        <img
-          src={pipImage}
-          alt=""
-          css={`
-            position: absolute;
-
-            bottom: 0;
-            right: 0;
-          `}
-        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+          }}
+        >
+          <Image src={pipImage} alt="" width="24px" height="24px" />
+        </div>
       )}
     </>
   )
@@ -56,7 +56,7 @@ function StatusIcon({ status }) {
       `}
     >
       {renderPipIfErrorOrSuccess(status)}
-      <img src={icon} alt="" />
+      <Image src={icon} alt="" width="64px" height={'64px'} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Image from 'next/image'
 import { useViewport } from 'use-viewport'
 import Button from './Button'
 import {
@@ -99,14 +100,15 @@ function StepperLayout({
 
               <div>
                 <Button onClick={onRepeatTransaction}>
-                  <img
+                  <Image
                     src={repeat}
-                    alt=""
-                    css={`
-                      margin-right: 10px;
-                    `}
+                    width="24px"
+                    height="24px"
+                    style={{
+                      margin: '0 5px',
+                    }}
                   />
-                  Repeat transaction
+                  <span style={{ marginLeft: '6px' }}>Repeat transaction</span>
                 </Button>
               </div>
             </div>

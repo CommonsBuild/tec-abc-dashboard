@@ -118,7 +118,7 @@ function MintSection() {
   //   newMintPrice,
   // })
 
-  const mainTokenPrice = pricePerUnitReceived && 1 / pricePerUnitReceived
+  const mainTokenPrice = pricePerUnitReceived > 0 && 1 / pricePerUnitReceived
   useEffect(() => {
     if (!token0 || !token1) return
     handleManualInputChange(toBonded ? token0 : token1, toBonded)
@@ -293,7 +293,13 @@ function MintSection() {
           <NewPrice>
             <p>New Mint Price</p>
             <div />
-            <p>${parseFloat(newMintPrice)?.toFixed(3)}</p>
+            <p>
+              $
+              {parseFloat(newMintPrice)?.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}
+            </p>
           </NewPrice>
         </Right>
       </div>

@@ -145,6 +145,7 @@ function ConvertSteps({
         <div
           css={`
             text-align: center;
+            background: #f9fafb;
           `}
         >
           <h1

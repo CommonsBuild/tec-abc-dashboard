@@ -107,13 +107,19 @@ function Step({ title, status, active, number, className, transactionHash }) {
                   left: 50%;
 
                   transform: translate(-50%, -50%);
-
                   line-height: 1;
                   color: #ffffff;
                   font-size: 24px;
                   font-weight: 600;
-
                   z-index: 1;
+
+                  width: 60%;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  background: #a1ac68;
+                  padding: 20px;
+                  border-radius: 100%;
                 `}
               >
                 {number}
@@ -127,9 +133,7 @@ function Step({ title, status, active, number, className, transactionHash }) {
                 ${ABSOLUTE_FILL}
 
                 border-radius: 100%;
-
                 border: 2px solid ${active ? borderColor : 'transparent'};
-
                 ${status === STEP_WAITING && pulseAnimation}
                 ${status === STEP_WORKING && spinAnimation}
               `}

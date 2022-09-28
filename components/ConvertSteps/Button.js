@@ -4,7 +4,7 @@ import { css } from 'styled-components'
 
 const MODE_STYLE = {
   primary: css`
-    background: linear-gradient(314.72deg, #DEFB48 -63.88%, #03B3FF 129.87%);
+    background: linear-gradient(314.72deg, #defb48 -63.88%, #03b3ff 129.87%);
     border: solid 0px transparent;
     color: white;
   `,
@@ -16,13 +16,14 @@ const MODE_STYLE = {
 }
 
 function Button({ className, children, mode, disabled, onClick }) {
+  const modeStyle = MODE_STYLE[mode]
   return (
     <button
       className={className}
       disabled={disabled}
       onClick={onClick}
       css={`
-        ${MODE_STYLE[mode]}
+        ${modeStyle}
 
         display: flex;
         align-items: center;
