@@ -1,5 +1,8 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { OverlayTrigger, Popover } from 'react-bootstrap'
 import styled from 'styled-components'
 import EthIdenticon from 'components/EthIdenticon/EthIdenticon'
@@ -9,12 +12,26 @@ import { shortenAddress } from 'lib/web3-utils'
 import frame from './provider-icons/frame.svg'
 import metamask from './provider-icons/metamask.svg'
 import colors from '../../utils/colors'
-import lightning from './lightning.svg'
-import Image from 'next/image'
 
 function AccountModule() {
+  const { pathname } = useRouter()
   const { account } = useWalletAugmented()
-  return account ? <ConnectedMode /> : <DisconnectedMode />
+  const isAdvanced = pathname === '/'
+  return (
+    <BtnsContainer>
+      <Link href={isAdvanced ? '/convert' : '/'}>
+        <Switch isAdvanced={isAdvanced}>
+          {!isAdvanced && <p style={{ color: '#ffff' }}>Advanced Page</p>}
+          <Image
+            src={isAdvanced ? '/icons/switch.svg' : '/icons/white_switch.svg'}
+            width="26px"
+            height="26px"
+          />
+        </Switch>
+      </Link>
+      {account ? <ConnectedMode /> : <DisconnectedMode />}
+    </BtnsContainer>
+  )
 }
 
 AccountModule.propTypes = {
@@ -23,17 +40,18 @@ AccountModule.propTypes = {
 
 function DisconnectedMode() {
   const { activate } = useWalletAugmented()
-
+  const { pathname } = useRouter()
+  const isAdvanced = pathname === '/'
   const containerRef = useRef()
-
+  const disconnectedColor = isAdvanced ? '#d2f67b' : '#ffff'
   return (
     <ButtonBase
       ref={containerRef}
       css={`
         position: relative;
-        width: 159px;
+        min-width: 159px;
         height: 40px;
-        border: 2px solid #d2f67b;
+        border: 2px solid ${disconnectedColor};
         border-radius: 10px;
         display: flex;
         justify-content: center;
@@ -56,7 +74,7 @@ function DisconnectedMode() {
                 position: relative;
                 width: 100%;
                 height: 32px;
-                border-bottom: 0.5px solid #dde4e8;
+                border-bottom: 0.5px solid #ffff;
                 text-transform: uppercase;
                 color: #637381;
               `}
@@ -102,7 +120,8 @@ function DisconnectedMode() {
             font-size: 16px;
             font-weight: medium;
             background: transparent;
-            color: ${colors.primary};
+            color: ${disconnectedColor};
+            font-weight: 500;
           `}
         >
           Connect Wallet
@@ -198,7 +217,7 @@ const StyledPopover = styled(Popover)`
   top: 103px;
 
   &.bs-popover-bottom .arrow::after {
-    border-bottom-color: #f9fafc;
+    border-bottom-color: #ffff;
   }
   &.bs-popover-bottom .arrow::before {
     border-bottom-color: transparent;
@@ -253,6 +272,30 @@ const ButtonBase = styled.div`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   cursor: pointer;
+`
+const BtnsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`
+
+const Switch = styled.div`
+  cursor: pointer;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 40px;
+  border: 2px solid ${props => (props.isAdvanced ? '#d2f67b' : '#ffff')};
+  border-radius: 10px;
+  margin: 0 9px 0 0;
+  padding: 13.5px 8px;
+  color: #d2f67b;
+  p {
+    margin: 0 0 2px 0;
+  }
 `
 
 export default AccountModule

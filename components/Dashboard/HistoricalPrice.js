@@ -30,7 +30,6 @@ ChartJS.register(
 
 function HistoricalPrice({ mintBurnPrices, chartData }) {
   const [data, setData] = useState(null)
-  console.log({ chartData })
 
   const {
     entryTributePct,

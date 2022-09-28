@@ -8,7 +8,7 @@ import NavBar from 'components/NavBar/NavBar'
 import Balance from 'components/SplitScreen/Balance'
 import SplitScreen from 'components/SplitScreen/SplitScreen'
 import { useWalletAugmented } from 'lib/wallet'
-import { useTokenBalance} from 'lib/web3-contracts'
+import { useTokenBalance } from 'lib/web3-contracts'
 import { formatUnits } from 'lib/web3-utils'
 import { useConvertInputs } from './useConvertInputs'
 
@@ -44,8 +44,9 @@ function ConvertForm() {
     pricePerUnitReceived,
     amountRetained,
   } = useConvertInputs(options[selectedOption], toBonded)
-  const [tokenBalance, spendableBalance] = useTokenBalance(options[selectedOption])
-
+  const [tokenBalance, spendableBalance] = useTokenBalance(
+    options[selectedOption]
+  )
 
   const { account } = useWalletAugmented()
 
@@ -83,7 +84,7 @@ function ConvertForm() {
   const submitButtonDisabled = Boolean(
     !account ||
       bondingPriceLoading ||
-      checkbox && !messageChecked ||
+      (checkbox && !messageChecked) ||
       !parseFloat(inputValueSource) > 0 ||
       inputError
   )
@@ -155,11 +156,26 @@ function ConvertForm() {
               disabled={true}
             />
             <LabelWithOverlay
-              label={`${selectedOption === 0 ?  `1 ${collateral.symbol} = ${pricePerUnitReceived} ${bonded.symbol}` : `1 ${bonded.symbol} = ${pricePerUnitReceived} ${collateral.symbol}`}  `}
+              label={`${
+                selectedOption === 0
+                  ? `1 ${collateral.symbol} = ${pricePerUnitReceived} ${bonded.symbol}`
+                  : `1 ${bonded.symbol} = ${pricePerUnitReceived} ${collateral.symbol}`
+              }  `}
               description={
                 <>
-                  <div>{selectedOption === 0 ? `Entry tribute (${entryTributePct}%): ${amountRetained} ${collateral.symbol}` : `Exit tribute (${exitTributePct}%): ${amountRetained} ${collateral.symbol}`}</div>
-                  <div>Minimum received (with slippage): {selectedOption === 0 ? amountMinWithSlippageFormatted + " " + bonded.symbol : amountMinWithSlippageFormatted + " " + collateral.symbol}</div>
+                  <div>
+                    {selectedOption === 0
+                      ? `Entry tribute (${entryTributePct}%): ${amountRetained} ${collateral.symbol}`
+                      : `Exit tribute (${exitTributePct}%): ${amountRetained} ${collateral.symbol}`}
+                  </div>
+                  <div>
+                    Minimum received (with slippage):{' '}
+                    {selectedOption === 0
+                      ? amountMinWithSlippageFormatted + ' ' + bonded.symbol
+                      : amountMinWithSlippageFormatted +
+                        ' ' +
+                        collateral.symbol}
+                  </div>
                 </>
               }
               overlayPlacement="top"
@@ -179,8 +195,8 @@ function ConvertForm() {
               <Button disabled={submitButtonDisabled} onClick={handleConvert}>
                 Convert
               </Button>
-              {
-                checkbox && <div
+              {checkbox && (
+                <div
                   css={`
                     display: flex;
                     align-items: center;
@@ -205,15 +221,12 @@ function ConvertForm() {
                       checked={messageChecked}
                     />
                     {checkbox.text + ' '}
-                    <Anchor
-                      href={checkbox.href}
-                      target="_blank"
-                    >
+                    <Anchor href={checkbox.href} target="_blank">
                       {checkbox.hrefText}
                     </Anchor>
                   </label>
                 </div>
-              }
+              )}
               <Docs />
             </div>
           </div>
@@ -236,9 +249,7 @@ function ConvertForm() {
 function LabelWithOverlay({ label, description, overlayPlacement }) {
   return (
     <div>
-      <Label>
-        {label}
-      </Label>
+      <Label>{label}</Label>
       <OverlayTrigger
         delay={{ hide: 400 }}
         overlay={props => (
@@ -248,7 +259,7 @@ function LabelWithOverlay({ label, description, overlayPlacement }) {
         )}
         placement={overlayPlacement}
       >
-          <img src={question} alt="" />
+        <img src={question} alt="" />
       </OverlayTrigger>
     </div>
   )
@@ -323,7 +334,7 @@ function Docs() {
 }
 
 const Button = styled.button`
-  background: linear-gradient(314.72deg, #DEFB48 -63.88%, #03B3FF 129.87%);
+  background: linear-gradient(314.72deg, #defb48 -63.88%, #03b3ff 129.87%);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
   border: solid 0px transparent;
   border-radius: 6px;
@@ -342,7 +353,7 @@ const Button = styled.button`
 `
 
 const HowToGetButton = styled.button`
-  background: #03B3FF;
+  background: #03b3ff;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
   border: solid 0px transparent;
   border-radius: 6px;

@@ -65,7 +65,7 @@ const InvertButton = React.forwardRef(function InvertButton(
       <animated.img
         alt={label}
         height="43"
-        src={arrowsImg}
+        src={'/icons/arrows.svg'}
         style={imgTransitions}
         width="43"
         css={`

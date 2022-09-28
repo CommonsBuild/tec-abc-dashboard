@@ -12,3 +12,15 @@
   margin-left: 42px;
   top: calc(40% - 22.5px);
 }
+
+#nprogress {
+  z-index: 1101;
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
+#nprogress > .bar {
+  height: 4px;
+  background-color: #d2f67b;
+}
