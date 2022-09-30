@@ -45,7 +45,7 @@ def get_monthly_mean(data):
     from pandas import json_normalize, to_datetime
     df = json_normalize(data)
     df['data.block_time'] = to_datetime(df['data.block_time'], errors='coerce')
-    monthly_avg = df.groupby(df['data.block_time'].dt.month)['data.price_per_token'].mean()
+    monthly_avg = df.groupby(df['data.block_time'].dt.to_period('M'))['data.price_per_token'].mean()
     return json.loads(monthly_avg.to_json())
 
 class handler(BaseHTTPRequestHandler):
@@ -61,10 +61,9 @@ class handler(BaseHTTPRequestHandler):
 
     burn_monthly_avg = get_monthly_mean(burn_data)
     mint_monthly_avg = get_monthly_mean(mint_data)
-
     month_avg = {
-        "burn": burn_monthly_avg,
-        "mint": mint_monthly_avg
+        "burn": { **burn_monthly_avg, "2022-01": burn_data[0]["data"]["price_per_token"]},
+        "mint": { **mint_monthly_avg, "2022-01": mint_data[0]["data"]["price_per_token"]},
     }
     month_avg_json = json.dumps(month_avg)
 

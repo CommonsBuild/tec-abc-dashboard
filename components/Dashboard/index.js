@@ -25,7 +25,7 @@ function Dashboard(props) {
                 commonsTribute: 0.6888,
                 entryTribute: 0.02,
                 exitTribute: 0.12,
-                stepList: [],
+                stepList: [[1000000, 'wxDAI']],
                 initialBuy: 265000,
                 ragequitAmount: 35795,
                 zoomGraph: '0',
@@ -48,7 +48,7 @@ function Dashboard(props) {
     // Fetch info
     bondingCurveData()
   }, [])
-
+  console.log({ chartPriceVsBalance })
   return (
     <div>
       <NavBar />

@@ -32,6 +32,7 @@ ChartJS.register(
 
 function BondingCurve({ chartData }) {
   const [data, setData] = useState(null)
+  const [priceIndex, setPriceIndex] = useState(null)
   const { pricePerUnitReceived } = useConvertInputs(bonded.symbol) // WXDAI
   const { reservePoolValue } = useBondingCurvePrice()
   const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
@@ -79,6 +80,17 @@ function BondingCurve({ chartData }) {
       })
     }
   }, [chartData])
+
+  useEffect(() => {
+    const getPricePoint = () => {
+      if (!mintPrice || !chartData) return
+      const index = chartData?.price?.findIndex(i => {
+        return parseFloat(i).toFixed(2) == parseFloat(mintPrice).toFixed(2)
+      })
+      setPriceIndex(index)
+    }
+    getPricePoint()
+  }, [mintPrice, chartData])
 
   const options = {
     responsive: true,
@@ -140,7 +152,10 @@ function BondingCurve({ chartData }) {
         const parsedDataset = _metasets[0]?._parsed
         // replace these values with the red point on design
         const currentPointIndex = parsedDataset.findIndex(
-          i => i.x === 261.18861840293226 && i.y === 0.7172208025193746
+          // i => i.x === 261.18861840293226 && i.y === 0.7172208025193746
+          i =>
+            i.x === chartData.balanceInThousands[priceIndex] &&
+            i.y === chartData.price[priceIndex]
         )
         const currentPoint = _metasets[0].dataset._points[currentPointIndex]
         const { x, y } = currentPoint
@@ -195,8 +210,9 @@ function BondingCurve({ chartData }) {
       </div>
     )
   }
-
+  console.log({ chartData, priceIndex, data })
   const rightContent = () => {
+    if (!chartData || !priceIndex) return
     if (!data) return
     return (
       <div className="bg-transparent ml-6 mr-8 p-8 w-full">

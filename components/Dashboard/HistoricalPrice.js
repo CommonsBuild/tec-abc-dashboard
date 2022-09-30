@@ -9,7 +9,9 @@ import {
   Tooltip,
   Filler,
   Legend,
+  TimeScale,
 } from 'chart.js'
+import 'chartjs-adapter-moment'
 import { Line } from 'react-chartjs-2'
 import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
@@ -18,6 +20,7 @@ import { useConvertInputs } from './useConvertInputs'
 
 ChartJS.register(
   CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -90,7 +93,10 @@ function HistoricalPrice({ mintBurnPrices, chartData }) {
     },
     scales: {
       xAxes: {
-        type: 'linear',
+        type: 'time',
+        time: {
+          unit: 'month',
+        },
         grid: {
           borderColor: 'white',
         },
