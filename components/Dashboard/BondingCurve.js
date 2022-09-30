@@ -196,7 +196,7 @@ function BondingCurve({ chartData }) {
             title="Reserve Balance"
             content={`${
               reservePoolValue
-                ? formatLocale(reservePoolValue).toLocaleString(undefined, {
+                ? formatLocale(reservePoolValue).toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })

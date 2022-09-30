@@ -295,7 +295,7 @@ function MintSection() {
             <div />
             <p>
               $
-              {parseFloat(newMintPrice)?.toLocaleString(undefined, {
+              {parseFloat(newMintPrice)?.toLocaleString('en-US', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
               })}

@@ -53,7 +53,7 @@ function MainCards() {
         title="CIRCULATING SUPPLY"
         content={
           bondTotalSupply
-            ? formatLocale(bondTotalSupply).toLocaleString(undefined, {
+            ? formatLocale(bondTotalSupply).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
@@ -77,7 +77,7 @@ function MainCards() {
         title="RESERVE"
         content={
           reservePoolValue
-            ? formatLocale(reservePoolValue).toLocaleString(undefined, {
+            ? formatLocale(reservePoolValue).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
@@ -90,7 +90,7 @@ function MainCards() {
         title="COMMON POOL"
         content={
           commonPoolBalance
-            ? formatLocale(commonPoolBalance).toLocaleString(undefined, {
+            ? formatLocale(commonPoolBalance).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })

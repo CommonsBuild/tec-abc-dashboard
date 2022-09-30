@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react'
+import moment from 'moment'
 import styled from 'styled-components'
 import ReactPaginate from 'react-paginate'
 import { shortenAddress } from 'lib/web3-utils'
+import { utils as EthersUtils } from 'ethers'
 import { MainTitle } from './Helpers'
+import { useWalletAugmented } from '../../lib/wallet'
+import { getNewMintPrice, useCollateral } from 'lib/web3-contracts'
 
 const Items = ({ currentItems }) => {
   const [items, setItems] = useState(null)
+  const { ethersProvider } = useWalletAugmented()
+  const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
   const getTx = async txHash => {
     return fetch(
       `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
@@ -15,34 +21,68 @@ const Items = ({ currentItems }) => {
   }
 
   useEffect(() => {
-    const getHashes = async () => {
+    const getExtraData = async () => {
       if (!currentItems) return
       let itemsArray = []
       await Promise.all(
         currentItems.map(async i => {
           const { data } = i
-          const txHash = data?.tx_hash?.match(/href="([^"]*)/)[1]?.split('/')[6]
+          const blockscout = data?.tx_hash?.match(/href="([^"]*)/)[1]
+          const txHash = blockscout?.split('/')[6]
           const hash = await getTx(txHash)
-          itemsArray.push({ ...data, hash })
+          const params = {
+            mintedTokens: data.amountBought?.toString(),
+            collateral: data.amountBought * data.price_per_token,
+            bonded: data.action === 'Buy',
+            reservePoolValue: EthersUtils.parseUnits(
+              data.reserve_balance?.toString()
+            ),
+            bondTotalSupply: EthersUtils.parseUnits(
+              data.cumulative_supply?.toString()
+            ),
+            reserveRatio,
+            ethersProvider,
+          }
+          const newMintPrice =
+            reserveRatio && ethersProvider && (await getNewMintPrice(params))
+          itemsArray.push({ ...data, hash, newMintPrice, blockscout })
         })
       )
       setItems(itemsArray)
     }
-    getHashes()
-  }, [currentItems])
+    getExtraData()
+  }, [ethersProvider, reserveRatio, currentItems])
 
   return items
     ? items.map(data => {
+        const d = new Date(data.block_time)
         return (
           <tr>
-            <td>{data?.hash ? shortenAddress(data.hash.result.from) : '-'}</td>
-            <td>-</td>
-            <td>-</td>
+            <td>{moment(d).format('MMM Do YY')}</td>
+            <td>
+              <a href={data?.blockscout} target="_blank" rel="noreferrer">
+                {data?.hash ? shortenAddress(data.hash.result.from) : '-'}
+              </a>
+            </td>
+            <td>
+              {data.reserve_balance.toLocaleString('en-US', {
+                maximumFractionDigits: 1,
+              })}
+            </td>
+            <td>
+              {data.cumulative_supply.toLocaleString('en-US', {
+                maximumFractionDigits: 1,
+              })}
+            </td>
             <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
             <td>{data.price_per_token.toFixed(2) || 0}</td>
             <td>{data.tribute.toFixed(2) || 0}</td>
             <td>{`${data.amountBought.toFixed(2)} TEC` || 0}</td>
-            <td>-</td>
+            <td>
+              {data?.newMintPrice
+                ? parseFloat(data?.newMintPrice)?.toFixed(2)
+                : '-'}
+            </td>
             <td>{data.action || ''}</td>
           </tr>
         )
@@ -51,7 +91,7 @@ const Items = ({ currentItems }) => {
 }
 
 function LastTransactions({ transactions }) {
-  console.log({ transactions })
+  const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
   const itemsPerPage = 10
   const items = transactions
   // We start with an empty list of items.
@@ -64,7 +104,6 @@ function LastTransactions({ transactions }) {
   useEffect(() => {
     // Fetch items from another resources.
     const endOffset = itemOffset + itemsPerPage
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
     setCurrentItems(items.slice(itemOffset, endOffset))
     setPageCount(Math.ceil(items.length / itemsPerPage))
   }, [itemOffset, itemsPerPage])
@@ -84,6 +123,7 @@ function LastTransactions({ transactions }) {
         <table>
           <tbody>
             <tr>
+              <th>Date</th>
               <th>Account</th>
               <th>Reserve {`(wxDAI)`}</th>
               <th>Total Supply {`(TEC)`}</th>
@@ -157,6 +197,13 @@ const TableContainer = styled.div`
   td {
     text-align: left;
     border-bottom: 1px solid white;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+  a:hover {
+    color: #d2f67b;
   }
 `
 
