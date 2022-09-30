@@ -25,7 +25,7 @@ function Dashboard(props) {
                 commonsTribute: 0.6888,
                 entryTribute: 0.02,
                 exitTribute: 0.12,
-                stepList: [[1000000, 'wxDAI']],
+                stepList: "[[1000000, 'wxDAI']]",
                 initialBuy: 265000,
                 ragequitAmount: 35795,
                 zoomGraph: '0',

@@ -158,6 +158,7 @@ function BondingCurve({ chartData }) {
             i.y === chartData.price[priceIndex]
         )
         const currentPoint = _metasets[0].dataset._points[currentPointIndex]
+        if (!currentPoint) return
         const { x, y } = currentPoint
         const bottomY = scales.yAxes.bottom
 
