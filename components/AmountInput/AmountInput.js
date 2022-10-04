@@ -7,6 +7,7 @@ import collateralColor from './xdai-color.svg'
 import collateralWhite from './xdai-white.svg'
 
 import { collateral, bonded } from '../../config'
+import Image from 'next/image'
 
 function getImage(color, symbol) {
   if (symbol === collateral.symbol) {
@@ -62,10 +63,25 @@ function AmountInput({
         />
         <span
           css={`
+            display: flex;
+            gap: 6px;
             position: relative;
             top: 1px;
+            align-items: center;
+            margin-left: -20px;
           `}
         >
+          {symbol === 'TEC' ? (
+            <Image src="/icons/tec_tiny.svg" width="32px" height="32px" />
+          ) : (
+            symbol === 'WXDAI' && (
+              <Image
+                src={`/icons/xdai_${color ? 'orange' : 'white'}_tiny.svg`}
+                width="32px"
+                height="32px"
+              />
+            )
+          )}
           {symbol}
         </span>
       </div>
@@ -80,13 +96,13 @@ function AmountInput({
           width: 100%;
           text-align: center;
           font-weight: 600;
-          color: ${color ? '#1c1c1c' : '#FFF'};
+          color: #fff;
           font-size: ${isCompact ? '36px' : '88px'};
           background: transparent;
           border: 0;
           outline: none;
           &::placeholder {
-            color: ${color ? '#1c1c1c' : '#FFF'};
+            color: #fff;
           }
         `}
       />

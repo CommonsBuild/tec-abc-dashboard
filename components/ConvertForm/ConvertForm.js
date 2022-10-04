@@ -248,7 +248,7 @@ function ConvertForm() {
 
 function LabelWithOverlay({ label, description, overlayPlacement }) {
   return (
-    <div>
+    <div style={{ margin: '0 0 8px 0' }}>
       <Label>{label}</Label>
       <OverlayTrigger
         delay={{ hide: 400 }}
@@ -318,7 +318,7 @@ function Docs() {
             display: inline;
             margin: 0 32px;
             a {
-              color: #a0a8c2;
+              color: #d2f67b;
             }
           }
           @media screen and (max-width: 1024px) {
@@ -353,11 +353,11 @@ const Button = styled.button`
 `
 
 const HowToGetButton = styled.button`
-  background: #03b3ff;
+  background: transparent;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-  border: solid 0px transparent;
+  border: solid 2px #d2f67b;
   border-radius: 6px;
-  color: black;
+  color: #d2f67b;
   width: 100%;
   max-width: 470px;
   font-size: 15px;

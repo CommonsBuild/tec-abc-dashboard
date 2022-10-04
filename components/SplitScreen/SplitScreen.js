@@ -220,7 +220,7 @@ function SplitScreen({ inverted, onInvert, reveal, primary, secondary }) {
                     justify-content: center;
                     width: 100%;
                     height: 100%;
-                    background: #fff;
+                    background: #313131;
                   `}
                 >
                   {secondary}

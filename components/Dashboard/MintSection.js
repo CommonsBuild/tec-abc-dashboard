@@ -241,6 +241,7 @@ function MintSection() {
           <Button
             onClick={() => {
               if (!acceptedTerms) return alert('please accept the terms')
+              if (!token0 || token0 <= 0 || !token1 || token1 < 0) return
               setStartTx(!startTx)
             }}
             disabled={!acceptedTerms}
