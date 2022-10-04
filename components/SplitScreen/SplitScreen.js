@@ -5,12 +5,12 @@ import { ABSOLUTE_FILL } from 'lib/css-utils'
 import InvertButton from './InvertButton'
 
 const BANNER_COLLATERAL = [
-  '/images/backgrounds/Xdai_background.png',
+  '/images/backgrounds/Xdai_background.svg',
   '324.02deg, #FCAE41 11.35%, #FCD040 91.48%',
   'cover',
 ]
 const BANNER_BONDED = [
-  '/images/backgrounds/TEC_background.png',
+  '/images/backgrounds/TEC_background.svg',
   '324.02deg, #E3FB6B 11.35%, #34C1FE 91.48%',
   'cover',
 ]
