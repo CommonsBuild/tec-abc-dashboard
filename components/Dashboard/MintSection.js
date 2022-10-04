@@ -82,9 +82,7 @@ function MintSection() {
     exitTribute,
   } = useBondingCurvePrice(amountSource, toBonded)
 
-  const reservePercentage = toBonded
-    ? (100 - entryTributePct) / 100
-    : (100 - exitTributePct) / 100
+  const reservePercentage = toBonded ? (100 - entryTributePct) / 100 : 1
   const commonPercentage = toBonded
     ? entryTributePct / 100
     : exitTributePct / 100
@@ -95,7 +93,7 @@ function MintSection() {
       : `${100 - exitTributePct}% ${collateralToken}`,
     b: toBonded ? `${entryTributePct}%` : `${exitTributePct}%`,
     c: mainToken,
-    d: toBonded ? `${100 - entryTributePct}%` : `${100 - exitTributePct}%`,
+    d: toBonded ? `${100 - entryTributePct}%` : `100%`,
   }
   const amountToReserve = token0 && token0 * reservePercentage
   const amountToCommon = token0 && token0 * commonPercentage
