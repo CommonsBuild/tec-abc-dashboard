@@ -7,6 +7,7 @@ import { utils as EthersUtils } from 'ethers'
 import { MainTitle } from './Helpers'
 import { useWalletAugmented } from '../../lib/wallet'
 import { getNewMintPrice, useCollateral } from 'lib/web3-contracts'
+import { collateral, bonded } from '../../config'
 
 const Items = ({ currentItems }) => {
   const [items, setItems] = useState(null)
@@ -19,7 +20,6 @@ const Items = ({ currentItems }) => {
       .then(response => response.json())
       .then(res => res)
   }
-
   useEffect(() => {
     const getExtraData = async () => {
       if (!currentItems) return
@@ -48,7 +48,11 @@ const Items = ({ currentItems }) => {
           itemsArray.push({ ...data, hash, newMintPrice, blockscout })
         })
       )
-      setItems(itemsArray)
+      setItems(
+        itemsArray.sort((x, y) => {
+          return moment(y.block_time).valueOf() - moment(x.block_time).valueOf()
+        })
+      )
     }
     getExtraData()
   }, [ethersProvider, reserveRatio, currentItems])
@@ -56,6 +60,7 @@ const Items = ({ currentItems }) => {
   return items
     ? items.map(data => {
         const d = new Date(data.block_time)
+        const isSell = data?.action === 'Sell'
         return (
           <tr>
             <td>{moment(d).format('MMM Do YY')}</td>
@@ -74,10 +79,17 @@ const Items = ({ currentItems }) => {
                 maximumFractionDigits: 1,
               })}
             </td>
-            <td>{data.paidAmount.toFixed(2) || 0} wxDAI</td>
+            <td>
+              {data.paidAmount.toFixed(2) || 0}{' '}
+              {isSell ? bonded.symbol : collateral.symbol}
+            </td>
             <td>{data.price_per_token.toFixed(2) || 0}</td>
             <td>{data.tribute.toFixed(2) || 0}</td>
-            <td>{`${data.amountBought.toFixed(2)} TEC` || 0}</td>
+            <td>
+              {`${data.amountBought.toFixed(2)} ${
+                isSell ? collateral.symbol : bonded.symbol
+              }` || 0}
+            </td>
             <td>
               {data?.newMintPrice
                 ? parseFloat(data?.newMintPrice)?.toFixed(2)

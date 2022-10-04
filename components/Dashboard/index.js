@@ -66,7 +66,7 @@ function Dashboard(props) {
           );
           border-radius: 100px 100px 0px 0px;
           margin: 136px 0 0 0;
-          padding: 0 117px;
+          padding: 0 117px 117px;
           align-items: center;
         `}
       >

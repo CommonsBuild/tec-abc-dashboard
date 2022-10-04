@@ -13,6 +13,8 @@ import {
 } from 'chart.js'
 import 'chartjs-adapter-moment'
 import { Line } from 'react-chartjs-2'
+import { useWalletAugmented } from 'lib/wallet'
+import Image from 'next/image'
 import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
 import { bonded } from '../../config'
@@ -33,6 +35,7 @@ ChartJS.register(
 
 function HistoricalPrice({ mintBurnPrices, chartData }) {
   const [data, setData] = useState(null)
+  const { account } = useWalletAugmented()
 
   const {
     entryTributePct,
@@ -148,7 +151,21 @@ function HistoricalPrice({ mintBurnPrices, chartData }) {
   }
 
   const rightContent = () => {
-    if (!data) return
+    if (!account || !data)
+      return (
+        <div className="bg-transparent ml-6 mr-8 mt-16 p-8 w-full">
+          <Image
+            src={'/images/placeholders/historical_price.png'}
+            width="703px"
+            height="258px"
+            style={{
+              filter: 'blur(0.4rem)',
+              'pointer-events': 'none',
+            }}
+          />
+        </div>
+      )
+
     return (
       <div className="bg-transparent ml-6 mr-8 p-8 w-full">
         <ChartGrid

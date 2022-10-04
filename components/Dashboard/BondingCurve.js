@@ -10,6 +10,7 @@ import {
   Filler,
   Legend,
 } from 'chart.js'
+import { useWalletAugmented } from 'lib/wallet'
 import { Line } from 'react-chartjs-2'
 import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
@@ -17,6 +18,7 @@ import { useBondingCurvePrice, useCollateral } from 'lib/web3-contracts'
 import { bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
 import { formatLocale } from 'utils'
+import Image from 'next/image'
 
 ChartJS.register(
   CategoryScale,
@@ -35,6 +37,7 @@ function BondingCurve({ chartData }) {
   const [priceIndex, setPriceIndex] = useState(null)
   const { pricePerUnitReceived } = useConvertInputs(bonded.symbol) // WXDAI
   const { reservePoolValue } = useBondingCurvePrice()
+  const { account } = useWalletAugmented()
   const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
 
   const collateralReserveRatio = reserveRatio / 1e4
@@ -211,10 +214,23 @@ function BondingCurve({ chartData }) {
       </div>
     )
   }
-  console.log({ chartData, priceIndex, data })
+
   const rightContent = () => {
-    if (!chartData || !priceIndex) return
-    if (!data) return
+    if (!account || !chartData || !priceIndex || !data)
+      return (
+        <div className="bg-transparent ml-6 mr-8 mt-16 p-8 w-full">
+          <Image
+            src={'/images/placeholders/bonding_curve.png'}
+            width="703px"
+            height="258px"
+            style={{
+              filter: 'blur(0.4rem)',
+              'pointer-events': 'none',
+            }}
+          />
+        </div>
+      )
+
     return (
       <div className="bg-transparent ml-6 mr-8 p-8 w-full">
         <ChartGrid

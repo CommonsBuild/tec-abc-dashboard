@@ -17,7 +17,7 @@ import ManageConversion from './ManageConversion'
 
 const options = [collateral.symbol, bonded.symbol]
 
-const Amount = ({ token, amount, primary, secondary, onChange }) => {
+const Amount = ({ token, amount, primary, secondary, disabled, onChange }) => {
   const { account } = useWalletAugmented()
   return (
     <AmountContainer>
@@ -38,9 +38,10 @@ const Amount = ({ token, amount, primary, secondary, onChange }) => {
         <input
           type="number"
           min="0"
-          value={amount}
+          value={amount || 0}
           onChange={onChange}
-          disabled={!account}
+          disabled={!account || disabled}
+          onFocus={event => event.target.select()}
         />
       </div>
     </AmountContainer>
@@ -51,8 +52,8 @@ function MintSection() {
   const [select, setSelection] = useState('mint')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [startTx, setStartTx] = useState(false)
-  const [token0, setToken0] = useState(0)
-  const [token1, setToken1] = useState(0)
+  const [token0, setToken0] = useState(null)
+  const [token1, setToken1] = useState(null)
   const mainToken = bonded.symbol
   const collateralToken = collateral.symbol
   const { account } = useWalletAugmented()
@@ -117,20 +118,22 @@ function MintSection() {
   //   exitTribute: formatUnits(exitTribute),
   //   newMintPrice,
   // })
-
   const mainTokenPrice = pricePerUnitReceived > 0 && 1 / pricePerUnitReceived
   useEffect(() => {
-    if (!token0 || !token1) return
-    handleManualInputChange(toBonded ? token0 : token1, toBonded)
-  }, [token0, token1])
+    const formatNumber = val =>
+      inputValueRecipient.replaceAll(',', '').toString()
+    if (toBonded) {
+      //Minting
+      setToken1(formatNumber(inputValueRecipient))
+    } else {
+      //Burning
+      setToken0(formatNumber(inputValueRecipient))
+    }
+  }, [amountMinWithSlippageFormatted])
 
-  useEffect(() => {
-    if (!token1 || !mainTokenPrice) return
-    setToken0((token1 * mainTokenPrice).toFixed(1))
-  }, [select, mainTokenPrice])
-
-  const checkEmptyVal = val => {
-    if (!val || Number(val) < 0) {
+  const checkNumberVal = val => {
+    if (/^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/.test(val)) return
+    if (Number(val) < 0) {
       setToken0(null)
       setToken1(null)
       return true
@@ -149,6 +152,8 @@ function MintSection() {
         }}
         onClick={() => {
           setSelection(type)
+          setToken0(null)
+          setToken1(null)
           resetInputs()
         }}
       >
@@ -160,6 +165,42 @@ function MintSection() {
       </SelectButton>
     )
   }
+
+  const Inputs = [
+    () => (
+      <Amount
+        token={collateralToken}
+        primary="#393741"
+        secondary="#00707A"
+        amount={token0}
+        onChange={e => {
+          e.preventDefault()
+          const val = e.target.value
+          if (checkNumberVal(val)) return
+          setToken0(val)
+          handleManualInputChange(val, toBonded)
+        }}
+        disabled={!toBonded}
+      />
+    ),
+    () => (
+      <Amount
+        token={mainToken}
+        primary="#0E684C"
+        secondary="#137556"
+        amount={token1}
+        onChange={e => {
+          e.preventDefault()
+          const val = e.target.value
+          if (checkNumberVal(val)) return
+          setToken1(val)
+          handleManualInputChange(val, toBonded)
+        }}
+        disabled={toBonded}
+      />
+    ),
+  ]
+
   return (
     <>
       {account && startTx && (
@@ -192,39 +233,22 @@ function MintSection() {
             <Selection type="mint" />
             <Selection type="burn" />
           </MainButtons>
-          <Amount
-            token={collateralToken}
-            primary="#393741"
-            secondary="#00707A"
-            amount={token0}
-            onChange={e => {
-              e.preventDefault()
-              const val = e.target.value
-              if (checkEmptyVal(val)) return
-              setToken0(val)
-              setToken1((val / mainTokenPrice).toFixed(1))
-            }}
-          />
-          <Amount
-            token={mainToken}
-            primary="#0E684C"
-            secondary="#137556"
-            amount={token1}
-            onChange={e => {
-              e.preventDefault()
-              const val = e.target.value
-              if (checkEmptyVal(val)) return
-              setToken1(val)
-              setToken0((val * mainTokenPrice).toFixed(1))
-            }}
-          />
+          {toBonded
+            ? Inputs.map(Input => {
+                return Input()
+              })
+            : Inputs.reverse().map(Input => {
+                return Input()
+              })}
           <Button
             onClick={() => {
               if (!acceptedTerms) return alert('please accept the terms')
               setStartTx(!startTx)
             }}
+            disabled={!acceptedTerms}
             css={`
               background: ${select === 'mint' ? colors.mint : colors.red};
+              cursor: ${acceptedTerms ? 'pointer' : 'not-allowed'};
             `}
           >
             <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
@@ -235,12 +259,8 @@ function MintSection() {
                   `Burn  ${mainToken} and get ${collateralToken} `}
             </p>
           </Button>
-          <InputContainer>
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={() => setAcceptedTerms(!acceptedTerms)}
-            />
+          <InputContainer onClick={() => setAcceptedTerms(!acceptedTerms)}>
+            <input type="checkbox" checked={acceptedTerms} />
             <p>
               {` By clicking on "${capitalizeFirstLetter(
                 select
@@ -441,10 +461,11 @@ const Button = styled.button`
   }
 `
 
-const InputContainer = styled.div`
+const InputContainer = styled.span`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  cursor: pointer;
   p {
     font-weight: 500;
     font-size: 10.6563px;

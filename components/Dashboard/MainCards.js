@@ -64,7 +64,7 @@ function MainCards() {
             ? (
                 (1 / pricePerUnitReceived) *
                 formatLocale(bondTotalSupply)
-              ).toLocaleString(undefined, {
+              ).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
