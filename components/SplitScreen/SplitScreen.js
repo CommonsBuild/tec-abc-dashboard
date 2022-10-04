@@ -4,18 +4,15 @@ import { useAnimateWhenMounted, SPRING_FAST } from 'lib/animation-utils'
 import { ABSOLUTE_FILL } from 'lib/css-utils'
 import InvertButton from './InvertButton'
 
-import illustrationCollateral from '../../assets/banner-illustration-collateral.svg'
-import illustrationBonded from '../../assets/banner-illustration-bonded.svg'
-
 const BANNER_COLLATERAL = [
-  illustrationCollateral,
+  '/images/backgrounds/Xdai_background.png',
   '324.02deg, #FCAE41 11.35%, #FCD040 91.48%',
-  'contain',
+  'cover',
 ]
 const BANNER_BONDED = [
-  illustrationBonded,
+  '/images/backgrounds/TEC_background.png',
   '324.02deg, #E3FB6B 11.35%, #34C1FE 91.48%',
-  '100% 400px',
+  'cover',
 ]
 
 const REVEAL_SCALE_FROM = 0.9
