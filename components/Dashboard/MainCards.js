@@ -83,12 +83,28 @@ function MainCards() {
               })
             : 0
         }
+        extraContent={
+          reservePoolValue
+            ? formatLocale(reservePoolValue).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
         icon="/icons/reserve.svg"
         currency={collateralToken}
       />
       <Card
         title="COMMON POOL"
         content={
+          commonPoolBalance
+            ? formatLocale(commonPoolBalance).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : 0
+        }
+        extraContent={
           commonPoolBalance
             ? formatLocale(commonPoolBalance).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
