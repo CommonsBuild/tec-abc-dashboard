@@ -155,7 +155,7 @@ function MintSection() {
           resetInputs()
         }}
       >
-        <p>{type === 'mint' ? 'Mint Price' : 'Burn Price'}</p>
+        <p>{type === 'mint' ? 'Mint' : 'Burn'}</p>
         <EntryText>
           {type === 'mint' ? 'Entry' : 'Exit'} Tribute{' '}
           {type === 'mint' ? entryTributePct : exitTributePct}%
