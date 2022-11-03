@@ -310,7 +310,7 @@ function MintSection() {
           </Chart>
 
           <NewPrice>
-            <p>New Mint Price</p>
+            <p>New {toBonded ? 'Mint' : 'Burn'} Price</p>
             <div />
             <p>
               $
