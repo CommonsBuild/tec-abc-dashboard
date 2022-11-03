@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
+import { useBondingCurvePrice } from 'lib/web3-contracts'
+import { formatLocale } from 'utils'
 
 function Item({ title, content }) {
   return (
@@ -18,19 +20,35 @@ function Item({ title, content }) {
 }
 
 function TopContainer() {
-  const {
-    entryTributePct,
-    exitTributePct,
-    pricePerUnitReceived,
-  } = useConvertInputs(bonded.symbol) // WXDAI
+  const { amountSource, entryTributePct, exitTributePct } = useConvertInputs(
+    bonded.symbol
+  ) // WXDAI
 
-  const mintPrice = pricePerUnitReceived
-    ? (1 / pricePerUnitReceived).toFixed(2)
+  const { pricePerUnit: mintPricePerUnit } = useBondingCurvePrice(
+    amountSource,
+    true
+  ) // mint
+
+  const { pricePerUnit: burnPricePerUnit } = useBondingCurvePrice(
+    amountSource,
+    false
+  ) // burn
+
+  const mintPrice = formatLocale(mintPricePerUnit)
+    ? (1 / formatLocale(mintPricePerUnit)).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
     : 0
-  const burnPrice = pricePerUnitReceived
-    ? ((1 / pricePerUnitReceived) * (1 - exitTributePct / 100)).toFixed(2)
+  console.log({ mintPricePerUnit })
+  const burnPrice = formatLocale(burnPricePerUnit)
+    ? formatLocale(burnPricePerUnit).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
     : 0
 
+  console.log({ mintPrice, burnPrice })
   return (
     <>
       <div
