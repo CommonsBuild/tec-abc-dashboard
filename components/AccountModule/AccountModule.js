@@ -21,7 +21,11 @@ function AccountModule() {
     <BtnsContainer>
       <Link href={isAdvanced ? '/convert' : '/'}>
         <Switch isAdvanced={isAdvanced}>
-          {!isAdvanced && <p style={{ color: '#ffff' }}>Advanced Page</p>}
+          {!isAdvanced ? (
+            <p style={{ color: '#ffff' }}>Advanced Page</p>
+          ) : (
+            <p>Simple Page</p>
+          )}
           <Image
             src={isAdvanced ? '/icons/switch.svg' : '/icons/white_switch.svg'}
             width="26px"
@@ -294,7 +298,7 @@ const Switch = styled.div`
   padding: 13.5px 8px;
   color: #d2f67b;
   p {
-    margin: 0 0 2px 0;
+    margin: 0 4px 2px 0;
   }
 `
 
