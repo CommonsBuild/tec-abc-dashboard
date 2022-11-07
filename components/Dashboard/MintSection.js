@@ -4,15 +4,11 @@ import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
 import { useWalletAugmented } from 'lib/wallet'
-import {
-  useBondingCurvePrice,
-  useTokenBalance,
-  useGetNewMintPrice,
-} from 'lib/web3-contracts'
+import { formatUnits } from 'lib/web3-utils'
+import { useTokenBalance, useGetNewMintPrice } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
-import { formatUnits } from 'lib/web3-utils'
 import ManageConversion from './ManageConversion'
 
 const options = [collateral.symbol, bonded.symbol]
@@ -75,12 +71,6 @@ function MintSection() {
     resetInputs,
     handleManualInputChange,
   } = useConvertInputs(options[1], toBonded) // WXDAI
-  const {
-    price: bondingCurvePrice,
-    pricePerUnit: bondingCurvePricePerUnit,
-    entryTribute,
-    exitTribute,
-  } = useBondingCurvePrice(amountSource, toBonded)
 
   const reservePercentage = toBonded ? (100 - entryTributePct) / 100 : 1
   const commonPercentage = toBonded
@@ -98,9 +88,8 @@ function MintSection() {
   const amountToReserve = token0 && token0 * reservePercentage
   const amountToCommon = token0 && token0 * commonPercentage
 
-  const fullTokenMint = inputValueRecipient + amountRetained
-
-  const [newMintPrice] = useGetNewMintPrice(fullTokenMint, token0, toBonded)
+  console.log({ amountSource: formatUnits(amountSource), token0, token1 })
+  const [newMintPrice] = useGetNewMintPrice(token1, token0, toBonded)
 
   // console.log('HERE', {
   //   amountSource,
@@ -116,7 +105,7 @@ function MintSection() {
   //   exitTribute: formatUnits(exitTribute),
   //   newMintPrice,
   // })
-  const mainTokenPrice = pricePerUnitReceived > 0 && 1 / pricePerUnitReceived
+
   useEffect(() => {
     const formatNumber = val =>
       inputValueRecipient.replaceAll(',', '').toString()
@@ -314,7 +303,7 @@ function MintSection() {
             <div />
             <p>
               $
-              {parseFloat(newMintPrice)?.toLocaleString('en-US', {
+              {parseFloat(token0 ? newMintPrice : 0)?.toLocaleString('en-US', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
               })}

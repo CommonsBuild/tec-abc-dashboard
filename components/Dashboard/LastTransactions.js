@@ -6,13 +6,18 @@ import { shortenAddress } from 'lib/web3-utils'
 import { utils as EthersUtils } from 'ethers'
 import { MainTitle } from './Helpers'
 import { useWalletAugmented } from '../../lib/wallet'
-import { getNewMintPrice, useCollateral } from 'lib/web3-contracts'
+import {
+  getNewMintPrice,
+  useCollateral,
+  useTributePcts,
+} from 'lib/web3-contracts'
 import { collateral, bonded } from '../../config'
 
 const Items = ({ currentItems }) => {
   const [items, setItems] = useState(null)
   const { ethersProvider } = useWalletAugmented()
   const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
+  const [entryTribute, exitTribute] = useTributePcts()
   const getTx = async txHash => {
     return fetch(
       `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
@@ -42,6 +47,8 @@ const Items = ({ currentItems }) => {
             ),
             reserveRatio,
             ethersProvider,
+            entryTribute,
+            exitTribute,
           }
           const newMintPrice =
             reserveRatio && ethersProvider && (await getNewMintPrice(params))

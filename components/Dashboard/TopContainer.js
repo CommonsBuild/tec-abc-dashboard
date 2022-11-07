@@ -40,7 +40,6 @@ function TopContainer() {
         maximumFractionDigits: 2,
       })
     : 0
-  console.log({ mintPricePerUnit })
   const burnPrice = formatLocale(burnPricePerUnit)
     ? formatLocale(burnPricePerUnit).toLocaleString('en-US', {
         minimumFractionDigits: 2,
@@ -48,7 +47,6 @@ function TopContainer() {
       })
     : 0
 
-  console.log({ mintPrice, burnPrice })
   return (
     <>
       <div

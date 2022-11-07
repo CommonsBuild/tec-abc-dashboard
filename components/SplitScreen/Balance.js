@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { formatUnits } from 'lib/web3-utils'
 import { bigNum } from '../../lib/utils'
 
-// TODO: Provide `digits` into formatUnits 
+// TODO: Provide `digits` into formatUnits
 function Balance({ tokenAmountToConvert, tokenBalance, spendableBalance }) {
   const balanceError = useMemo(
     () =>
@@ -25,8 +25,16 @@ function Balance({ tokenAmountToConvert, tokenBalance, spendableBalance }) {
       `}
     >
       {balanceError ? 'Insufficient balance' : 'Balance'}:{' '}
-      {formatUnits(spendableBalance || 0, { truncateToDecimalPlace: 3, replaceZeroBy: '0' })}<br/>
-      {!spendableBalance.eq(tokenBalance) && `Locked: ${formatUnits(tokenBalance.sub(spendableBalance), { truncateToDecimalPlace: 3, replaceZeroBy: '0' })}`}
+      {formatUnits(spendableBalance || 0, {
+        truncateToDecimalPlace: 3,
+        replaceZeroBy: '0',
+      })}
+      <br />
+      {!spendableBalance.eq(tokenBalance) &&
+        `Lockedd: ${formatUnits(tokenBalance.sub(spendableBalance), {
+          truncateToDecimalPlace: 3,
+          replaceZeroBy: '0',
+        })}`}
     </div>
   ) : null
 }
