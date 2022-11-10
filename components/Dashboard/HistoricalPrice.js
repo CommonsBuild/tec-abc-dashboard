@@ -19,6 +19,8 @@ import { SplitContainer, MainTitle, Display } from './Helpers'
 import { ChartGrid, ChartAxisLabel } from '../Chart'
 import { bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
+import { useBondingCurvePrice } from 'lib/web3-contracts'
+import { formatUnits, parseUnits } from 'lib/web3-utils'
 
 ChartJS.register(
   CategoryScale,
@@ -38,6 +40,7 @@ function HistoricalPrice({ mintBurnPrices, chartData }) {
   const { account } = useWalletAugmented()
 
   const {
+    amountSource,
     entryTributePct,
     exitTributePct,
     pricePerUnitReceived,
@@ -45,8 +48,13 @@ function HistoricalPrice({ mintBurnPrices, chartData }) {
   const mintPrice = pricePerUnitReceived
     ? (1 / pricePerUnitReceived).toFixed(2)
     : 0
-  const burnPrice = pricePerUnitReceived
-    ? ((1 / pricePerUnitReceived) * (1 - exitTributePct / 100)).toFixed(2)
+
+  const { pricePerUnit: burnPricePerUnit } = useBondingCurvePrice(
+    amountSource,
+    false
+  )
+  const burnPrice = burnPricePerUnit
+    ? parseFloat(formatUnits(burnPricePerUnit)).toFixed(2)
     : 0
 
   useEffect(() => {
