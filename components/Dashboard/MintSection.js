@@ -4,8 +4,12 @@ import styled from 'styled-components'
 import colors from 'utils/colors'
 import Image from 'next/image'
 import { useWalletAugmented } from 'lib/wallet'
-import { formatUnits } from 'lib/web3-utils'
-import { useTokenBalance, useGetNewMintPrice } from 'lib/web3-contracts'
+import { formatUnits, parseUnits } from 'lib/web3-utils'
+import {
+  useTokenBalance,
+  useGetNewMintPrice,
+  useBondingCurvePrice,
+} from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
 import { useConvertInputs } from './useConvertInputs'
@@ -88,8 +92,13 @@ function MintSection() {
   const amountToReserve = token0 && token0 * reservePercentage
   const amountToCommon = token0 && token0 * commonPercentage
 
-  console.log({ amountSource: formatUnits(amountSource), token0, token1 })
-  const [newMintPrice] = useGetNewMintPrice(token1, token0, toBonded)
+  // console.log({ amountSource: formatUnits(amountSource), token0, token1 })
+  const _newMintPrice = useGetNewMintPrice(token1, token0, toBonded)
+  const { pricePerUnit: newBurnPrice } = useBondingCurvePrice(
+    amountSource,
+    false
+  )
+  const _newBurnPrice = formatUnits(newBurnPrice)
 
   // console.log('HERE', {
   //   amountSource,
@@ -303,7 +312,9 @@ function MintSection() {
             <div />
             <p>
               $
-              {parseFloat(token0 ? newMintPrice : 0)?.toLocaleString('en-US', {
+              {parseFloat(
+                token0 ? (toBonded ? _newMintPrice : _newBurnPrice) : 0
+              )?.toLocaleString('en-US', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
               })}
