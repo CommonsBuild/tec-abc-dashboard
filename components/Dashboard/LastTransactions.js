@@ -3,76 +3,19 @@ import moment from 'moment'
 import styled from 'styled-components'
 import ReactPaginate from 'react-paginate'
 import { shortenAddress } from 'lib/web3-utils'
-import { bigNumberify } from 'lib/utils'
-import { utils as EthersUtils } from 'ethers'
 import { MainTitle } from './Helpers'
-import { useWalletAugmented } from '../../lib/wallet'
-import {
-  getNewMintPrice,
-  useCollateral,
-  useTributePcts,
-} from 'lib/web3-contracts'
+import { useCollateral } from 'lib/web3-contracts'
 import { collateral, bonded } from '../../config'
 
 const Items = ({ currentItems }) => {
-  const [items, setItems] = useState(null)
-  const { ethersProvider } = useWalletAugmented()
-  const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
-  const [entryTribute, exitTribute] = useTributePcts()
-  const getTx = async txHash => {
-    return fetch(
-      `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
-    )
-      .then(response => response.json())
-      .then(res => res)
-  }
-  useEffect(() => {
-    const getExtraData = async () => {
-      if (!currentItems) return
-      let itemsArray = []
-      return setItems(currentItems)
-      await Promise.all(
-        currentItems.map(async i => {
-          const { data } = i
-          const blockscout = data?.tx_hash?.match(/href="([^"]*)/)[1]
-          const txHash = blockscout?.split('/')[6]
-          const hash = await getTx(txHash)
-          const params = {
-            mintedTokens: data.returnedAmount?.toString(),
-            collateral: data.amountBought * data.price_per_token,
-            bonded: data.action === 'Buy',
-            reservePoolValue: EthersUtils.parseUnits(
-              data.reserve_balance?.toString()
-            ),
-            bondTotalSupply: EthersUtils.parseUnits(
-              data.cumulative_supply?.toString()
-            ),
-            reserveRatio,
-            ethersProvider,
-            entryTribute,
-            exitTribute,
-          }
-          const newMintPrice =
-            reserveRatio && ethersProvider && (await getNewMintPrice(params))
-          itemsArray.push({ ...data, hash, newMintPrice, blockscout })
-        })
-      )
-      // setItems(
-      //   itemsArray.sort((x, y) => {
-      //     return moment(y.block_time).valueOf() - moment(x.block_time).valueOf()
-      //   })
-      // )
-    }
-    getExtraData()
-  }, [ethersProvider, reserveRatio, currentItems])
-
-  return items
-    ? items.map(data => {
+  return currentItems
+    ? currentItems.map(data => {
         const d = new Date(parseInt(data.timestamp) * 1000)
         const isSell = !!data?.burnPrice
         const purchase = data[isSell ? 'sellAmount' : 'purchaseAmount']
         const action = isSell ? 'Sell' : 'Buy'
         const price = data[isSell ? 'burnPrice' : 'mintPrice'] / 1e6
+        const newPrice = data?.newPrice / 1e6
 
         const txUrl = `https://blockscout.com/xdai/mainnet/tx/${data.hash}`
         return (
@@ -118,7 +61,14 @@ const Items = ({ currentItems }) => {
                 minimumFractionDigits: 0,
               })} ${isSell ? collateral.symbol : bonded.symbol}` || 0}
             </td>
-            <td>{data?.newMintPrice ? parseFloat(data?.newMintPrice) : '-'}</td>
+            <td>
+              {newPrice
+                ? newPrice.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 0,
+                  })
+                : '-'}
+            </td>
             <td>{action || ''}</td>
           </tr>
         )
