@@ -3,7 +3,7 @@ import axios from 'axios'
 import Dashboard from '../components/Dashboard'
 
 export default props => {
-  console.log({ props })
+  console.log({ data: props })
   return <Dashboard {...props} />
 }
 

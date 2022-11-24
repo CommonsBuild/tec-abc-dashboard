@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import styled from 'styled-components'
 import colors from 'utils/colors'
@@ -12,12 +12,21 @@ import {
 } from 'lib/web3-contracts'
 import { capitalizeFirstLetter, formatNumber } from 'utils'
 import { collateral, bonded } from '../../config'
+import Balance from 'components/SplitScreen/Balance'
 import { useConvertInputs } from './useConvertInputs'
 import ManageConversion from './ManageConversion'
 
 const options = [collateral.symbol, bonded.symbol]
 
-const Amount = ({ token, amount, primary, secondary, disabled, onChange }) => {
+const Amount = ({
+  token,
+  amount,
+  Balance,
+  primary,
+  secondary,
+  disabled,
+  onChange,
+}) => {
   const { account } = useWalletAugmented()
   return (
     <AmountContainer>
@@ -32,6 +41,8 @@ const Amount = ({ token, amount, primary, secondary, disabled, onChange }) => {
       <div
         css={`
           flex: 0.6;
+          flex-direction: column;
+          justify-content: center;
           background: ${secondary};
         `}
       >
@@ -39,10 +50,15 @@ const Amount = ({ token, amount, primary, secondary, disabled, onChange }) => {
           type="number"
           min="0"
           value={amount || 0}
+          placeholder="0"
           onChange={onChange}
           disabled={!account || disabled}
           onFocus={event => event.target.select()}
+          onWheel={e => e.target.blur()}
         />
+        <div>
+          <Balance />
+        </div>
       </div>
     </AmountContainer>
   )
@@ -57,9 +73,6 @@ function MintSection() {
   const mainToken = bonded.symbol
   const collateralToken = collateral.symbol
   const { account } = useWalletAugmented()
-  const [token0Balance, spendable0Balance] = useTokenBalance(options[1]) // TEC
-  const [token1Balance, spendable1Balance] = useTokenBalance(options[0]) // WXDAI
-
   const toBonded = select === 'mint'
 
   const {
@@ -99,6 +112,30 @@ function MintSection() {
     false
   )
   const _newBurnPrice = formatUnits(newBurnPrice)
+
+  const [collateralBalance, spendableCollateralBalance] = useTokenBalance(
+    options[0]
+  )
+  const [tokenBalance, spendableTokenBalance] = useTokenBalance(options[1])
+
+  const collateralErrorBalance = useMemo(
+    () =>
+      amountSource.gt(collateralBalance) &&
+      !amountSource.eq(-1) &&
+      !collateralBalance.eq(-1),
+    [amountSource, collateralBalance, spendableCollateralBalance]
+  )
+
+  const tokenErrorBalance = useMemo(
+    () =>
+      amountSource.gt(tokenBalance) &&
+      !amountSource.eq(-1) &&
+      !tokenBalance.eq(-1),
+    [amountSource, tokenBalance, spendableTokenBalance]
+  )
+
+  const amountInputError =
+    (toBonded && collateralErrorBalance) || (!toBonded && tokenErrorBalance)
 
   // console.log('HERE', {
   //   amountSource,
@@ -164,36 +201,58 @@ function MintSection() {
 
   const Inputs = [
     () => (
-      <Amount
-        token={collateralToken}
-        primary="#393741"
-        secondary="#00707A"
-        amount={token0}
-        onChange={e => {
-          e.preventDefault()
-          const val = e.target.value
-          if (checkNumberVal(val)) return
-          setToken0(val)
-          handleManualInputChange(val, toBonded)
-        }}
-        disabled={!toBonded}
-      />
+      <>
+        <Amount
+          token={collateralToken}
+          primary="#393741"
+          secondary="#00707A"
+          amount={token0}
+          onChange={e => {
+            e.preventDefault()
+            const val = e.target.value
+            if (checkNumberVal(val)) return
+            setToken0(val)
+            handleManualInputChange(val, toBonded)
+          }}
+          disabled={!toBonded}
+          Balance={() => (
+            <Balance
+              tokenBalance={collateralBalance}
+              spendableBalance={spendableCollateralBalance}
+              tokenAmountToConvert={amountSource}
+              noShowError={select === 'burn'}
+              insideInput
+            />
+          )}
+        />
+      </>
     ),
     () => (
-      <Amount
-        token={mainToken}
-        primary="#0E684C"
-        secondary="#137556"
-        amount={token1}
-        onChange={e => {
-          e.preventDefault()
-          const val = e.target.value
-          if (checkNumberVal(val)) return
-          setToken1(val)
-          handleManualInputChange(val, toBonded)
-        }}
-        disabled={toBonded}
-      />
+      <>
+        <Amount
+          token={mainToken}
+          primary="#0E684C"
+          secondary="#137556"
+          amount={token1}
+          onChange={e => {
+            e.preventDefault()
+            const val = e.target.value
+            if (checkNumberVal(val)) return
+            setToken1(val)
+            handleManualInputChange(val, toBonded)
+          }}
+          disabled={toBonded}
+          Balance={() => (
+            <Balance
+              tokenBalance={tokenBalance}
+              spendableBalance={spendableTokenBalance}
+              tokenAmountToConvert={amountSource}
+              noShowError={select === 'mint'}
+              insideInput
+            />
+          )}
+        />
+      </>
     ),
   ]
 
@@ -242,10 +301,12 @@ function MintSection() {
               if (!token0 || token0 <= 0 || !token1 || token1 < 0) return
               setStartTx(!startTx)
             }}
-            disabled={!acceptedTerms}
+            disabled={!acceptedTerms || amountInputError}
             css={`
               background: ${select === 'mint' ? colors.mint : colors.red};
-              cursor: ${acceptedTerms ? 'pointer' : 'not-allowed'};
+              cursor: ${acceptedTerms && !amountInputError
+                ? 'pointer'
+                : 'not-allowed'};
             `}
           >
             <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
@@ -398,6 +459,7 @@ const EntryText = styled.div`
 
 const AmountContainer = styled.div`
   display: flex;
+  justify-content: center;
   width: 392px;
   height: 95.15px;
   background: #393741;
@@ -408,7 +470,8 @@ const AmountContainer = styled.div`
   }
   div:nth-child(2) {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
     border-radius: 0px 10.466px 10.466px 0px;
     input {
       background: transparent;
@@ -416,7 +479,9 @@ const AmountContainer = styled.div`
       font-size: 34.2524px;
       color: white;
       width: 200px;
-      margin: 0 0 0 20px;
+    }
+    input:focus {
+      outline: none;
     }
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
@@ -434,6 +499,9 @@ const AmountContainer = styled.div`
     font-size: 34.2524px;
     line-height: 43px;
     color: #ffffff;
+  }
+  input {
+    text-align: center;
   }
 `
 
