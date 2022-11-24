@@ -280,52 +280,69 @@ function MintSection() {
           gap: 30px;
           justify-content: center;
           margin: 48px 0 0 0;
-          height: 442px;
         `}
       >
         <Left>
-          <MainButtons>
-            <Selection type="mint" />
-            <Selection type="burn" />
-          </MainButtons>
-          {toBonded
-            ? Inputs.map(Input => {
-                return Input()
-              })
-            : Inputs.reverse().map(Input => {
-                return Input()
-              })}
-          <Button
-            onClick={() => {
-              if (!acceptedTerms) return alert('please accept the terms')
-              if (!token0 || token0 <= 0 || !token1 || token1 < 0) return
-              setStartTx(!startTx)
-            }}
-            disabled={!acceptedTerms || amountInputError}
-            css={`
-              background: ${select === 'mint' ? colors.mint : colors.red};
-              cursor: ${acceptedTerms && !amountInputError
-                ? 'pointer'
-                : 'not-allowed'};
-            `}
-          >
-            <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
-            <p>
-              {select === 'mint'
-                ? `Deposit ${collateralToken} and mint ${mainToken}`
-                : select === 'burn' &&
-                  `Burn  ${mainToken} and get ${collateralToken} `}
-            </p>
-          </Button>
-          <InputContainer onClick={() => setAcceptedTerms(!acceptedTerms)}>
-            <input type="checkbox" checked={acceptedTerms} />
-            <p>
-              {` By clicking on "${capitalizeFirstLetter(
-                select
-              )}" you are accepting `}{' '}
-              <a>these terms</a>
-            </p>
-          </InputContainer>
+          <LeftBox>
+            <MainButtons>
+              <Selection type="mint" />
+              <Selection type="burn" />
+            </MainButtons>
+            {toBonded
+              ? Inputs.map(Input => {
+                  return Input()
+                })
+              : Inputs.reverse().map(Input => {
+                  return Input()
+                })}
+            <Button
+              onClick={() => {
+                if (!acceptedTerms) return alert('please accept the terms')
+                if (!token0 || token0 <= 0 || !token1 || token1 < 0) return
+                setStartTx(!startTx)
+              }}
+              disabled={!acceptedTerms || amountInputError}
+              css={`
+                background: ${select === 'mint' ? colors.mint : colors.red};
+                cursor: ${acceptedTerms && !amountInputError
+                  ? 'pointer'
+                  : 'not-allowed'};
+              `}
+            >
+              <p>{select === 'mint' ? 'Mint' : 'Burn'}</p>
+              <p>
+                {select === 'mint'
+                  ? `Deposit ${collateralToken} and mint ${mainToken}`
+                  : select === 'burn' &&
+                    `Burn  ${mainToken} and get ${collateralToken} `}
+              </p>
+            </Button>
+            <InputContainer onClick={() => setAcceptedTerms(!acceptedTerms)}>
+              <input type="checkbox" checked={acceptedTerms} />
+              <p>
+                {` By clicking on "${capitalizeFirstLetter(
+                  select
+                )}" you are accepting `}{' '}
+                <a>these terms</a>
+              </p>
+            </InputContainer>
+          </LeftBox>
+          <LowContainer>
+            <Buttons>
+              <BigButton target="_blank" href="https://wrapeth.com/">
+                Wrap xDAI
+              </BigButton>
+              <BigButton target="_blank" href="https://bridge.gnosischain.com/">
+                Bridge DAI
+              </BigButton>
+            </Buttons>
+            <a
+              target="_blank"
+              href="https://token-engineering-commons.gitbook.io/tec-handbook/how-to-purchase-usdtec" rel="noreferrer"
+            >
+              or learn how to purchase xDAI
+            </a>
+          </LowContainer>
         </Left>
         <Right>
           <Chart>
@@ -401,18 +418,24 @@ const modalStyle = {
 
 const Left = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 0.3;
+  flex-direction: column;
+`
+
+const LeftBox = styled.div`
   max-width: 419px;
   background: #191919;
   border-radius: 11px;
   padding: 14px;
+  align-items: center;
+  justify-content: center;
 `
 const Right = styled.div`
   display: flex;
   position: relative;
   flex: 0.7;
   width: 677px;
+  height: 442px;
   flex-direction: row;
   justify-content: center;
   background: #191919;
@@ -642,8 +665,47 @@ const NewPrice = styled.div`
   }
   p:first-child {
     font-size: 19.0244px;
-    color: #ffffff !important;
+    color: white !important;
   }
+`
+
+const LowContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+  align-items: center;
+  a {
+    color: white;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    margin-top: -16px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+`
+
+const BigButton = styled.a`
+  width: 129px;
+  border: 1px solid white;
+  border-radius: 8px;
+  padding: 10px 25px;
+  text-align: center;
+  color: white !important;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  cursor: pointer;
 `
 
 export default MintSection
