@@ -1,4 +1,5 @@
 {
+  "graph": "https://api.thegraph.com/subgraphs/name/mateodaza/tec-abc-subgraph",
   "collateral": {
     "symbol": "WXDAI",
     "decimals": 18,

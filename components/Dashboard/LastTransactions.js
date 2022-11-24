@@ -3,106 +3,73 @@ import moment from 'moment'
 import styled from 'styled-components'
 import ReactPaginate from 'react-paginate'
 import { shortenAddress } from 'lib/web3-utils'
-import { utils as EthersUtils } from 'ethers'
 import { MainTitle } from './Helpers'
-import { useWalletAugmented } from '../../lib/wallet'
-import {
-  getNewMintPrice,
-  useCollateral,
-  useTributePcts,
-} from 'lib/web3-contracts'
+import { useCollateral } from 'lib/web3-contracts'
 import { collateral, bonded } from '../../config'
 
 const Items = ({ currentItems }) => {
-  const [items, setItems] = useState(null)
-  const { ethersProvider } = useWalletAugmented()
-  const [virtualBalance, virtualSupply, reserveRatio] = useCollateral()
-  const [entryTribute, exitTribute] = useTributePcts()
-  const getTx = async txHash => {
-    return fetch(
-      `https://blockscout.com/xdai/mainnet/api?module=transaction&action=gettxinfo&txhash=${txHash}`
-    )
-      .then(response => response.json())
-      .then(res => res)
-  }
-  useEffect(() => {
-    const getExtraData = async () => {
-      if (!currentItems) return
-      let itemsArray = []
-      await Promise.all(
-        currentItems.map(async i => {
-          const { data } = i
-          const blockscout = data?.tx_hash?.match(/href="([^"]*)/)[1]
-          const txHash = blockscout?.split('/')[6]
-          const hash = await getTx(txHash)
-          const params = {
-            mintedTokens: data.amountBought?.toString(),
-            collateral: data.amountBought * data.price_per_token,
-            bonded: data.action === 'Buy',
-            reservePoolValue: EthersUtils.parseUnits(
-              data.reserve_balance?.toString()
-            ),
-            bondTotalSupply: EthersUtils.parseUnits(
-              data.cumulative_supply?.toString()
-            ),
-            reserveRatio,
-            ethersProvider,
-            entryTribute,
-            exitTribute,
-          }
-          const newMintPrice =
-            reserveRatio && ethersProvider && (await getNewMintPrice(params))
-          itemsArray.push({ ...data, hash, newMintPrice, blockscout })
-        })
-      )
-      setItems(
-        itemsArray.sort((x, y) => {
-          return moment(y.block_time).valueOf() - moment(x.block_time).valueOf()
-        })
-      )
-    }
-    getExtraData()
-  }, [ethersProvider, reserveRatio, currentItems])
+  return currentItems
+    ? currentItems.map(data => {
+        const d = new Date(parseInt(data.timestamp) * 1000)
+        const isSell = !!data?.burnPrice
+        const purchase = data[isSell ? 'sellAmount' : 'purchaseAmount']
+        const action = isSell ? 'Sell' : 'Buy'
+        const price = data[isSell ? 'burnPrice' : 'mintPrice'] / 1e6
+        const newPrice = data?.newPrice / 1e6
 
-  return items
-    ? items.map(data => {
-        const d = new Date(data.block_time)
-        const isSell = data?.action === 'Sell'
+        const txUrl = `https://blockscout.com/xdai/mainnet/tx/${data.hash}`
         return (
           <tr>
             <td>{moment(d).format('MMM Do YY')}</td>
             <td>
-              <a href={data?.blockscout} target="_blank" rel="noreferrer">
-                {data?.hash ? shortenAddress(data.hash.result.from) : '-'}
+              <a href={txUrl} target="_blank" rel="noreferrer">
+                {data?.id ? shortenAddress(data.id) : '-'}
               </a>
             </td>
             <td>
-              {data.reserve_balance.toLocaleString('en-US', {
+              {(data.reserveBalance / 1e18).toLocaleString('en-US', {
                 maximumFractionDigits: 1,
               })}
             </td>
             <td>
-              {data.cumulative_supply.toLocaleString('en-US', {
+              {(data.supplyBalance / 1e18).toLocaleString('en-US', {
                 maximumFractionDigits: 1,
               })}
             </td>
             <td>
-              {data.paidAmount.toFixed(2) || 0}{' '}
+              {(purchase / 1e18).toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              }) || 0}{' '}
               {isSell ? bonded.symbol : collateral.symbol}
             </td>
-            <td>{data.price_per_token.toFixed(2) || 0}</td>
-            <td>{data.tribute.toFixed(2) || 0}</td>
             <td>
-              {`${data.amountBought.toFixed(2)} ${
-                isSell ? collateral.symbol : bonded.symbol
-              }` || 0}
+              {price.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              }) || 0}
             </td>
             <td>
-              {data?.newMintPrice
-                ? parseFloat(data?.newMintPrice)?.toFixed(2)
+              {(data.fee / 1e18).toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              }) || 0}
+            </td>
+            <td>
+              {`${(data.returnedAmount / 1e18).toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              })} ${isSell ? collateral.symbol : bonded.symbol}` || 0}
+            </td>
+            <td>
+              {newPrice
+                ? newPrice.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 0,
+                  })
                 : '-'}
             </td>
-            <td>{data.action || ''}</td>
+            <td>{action || ''}</td>
           </tr>
         )
       })

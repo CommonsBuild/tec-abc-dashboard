@@ -53,9 +53,10 @@ function HistoricalPrice({ mintBurnPrices, chartData }) {
     amountSource,
     false
   )
-  const burnPrice = burnPricePerUnit
-    ? parseFloat(formatUnits(burnPricePerUnit)).toFixed(2)
-    : 0
+  const burnPrice =
+    !!burnPricePerUnit && burnPricePerUnit >= 0
+      ? parseFloat(formatUnits(burnPricePerUnit)).toFixed(2)
+      : 0
 
   useEffect(() => {
     if (mintBurnPrices) {

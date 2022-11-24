@@ -48,7 +48,7 @@ function Dashboard(props) {
     // Fetch info
     bondingCurveData()
   }, [])
-  console.log({ chartPriceVsBalance })
+  // console.log({ chartPriceVsBalance })
   return (
     <div>
       <NavBar />
