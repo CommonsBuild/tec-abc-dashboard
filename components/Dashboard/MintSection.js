@@ -49,8 +49,8 @@ const Amount = ({
         <input
           type="number"
           min="0"
-          value={amount || 0}
-          placeholder="0"
+          value={amount || ''}
+          placeholder="000.000"
           onChange={onChange}
           disabled={!account || disabled}
           onFocus={event => event.target.select()}
@@ -338,7 +338,8 @@ function MintSection() {
             </Buttons>
             <a
               target="_blank"
-              href="https://token-engineering-commons.gitbook.io/tec-handbook/how-to-purchase-usdtec" rel="noreferrer"
+              href="https://token-engineering-commons.gitbook.io/tec-handbook/how-to-purchase-usdtec"
+              rel="noreferrer"
             >
               or learn how to purchase xDAI
             </a>
@@ -510,6 +511,9 @@ const AmountContainer = styled.div`
     input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
+    }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
   }
   div {
