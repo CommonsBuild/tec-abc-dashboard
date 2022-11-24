@@ -1,9 +1,9 @@
 {
-  "name": "convert.aragon.org",
-  "version": "1.0.0",
+  "name": "convert.tecommons.org",
+  "version": "2.0.0",
   "private": true,
   "main": "src/index.js",
-  "homepage": "https://github.com/aragon/convert.aragon.org",
+  "homepage": "https://github.com/CommonsBuild/tec-abc-dashboard",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "build": "next build",
