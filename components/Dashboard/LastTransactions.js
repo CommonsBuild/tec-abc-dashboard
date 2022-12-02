@@ -101,7 +101,7 @@ function LastTransactions({ transactions }) {
   }
 
   return (
-    <div>
+    <Container>
       <BigTitle>
         <MainTitle value={'Last Transactions'} size="32px" />
       </BigTitle>
@@ -137,12 +137,18 @@ function LastTransactions({ transactions }) {
           />
         </StyledPaginateContainer>
       </TableContainer>
-    </div>
+    </Container>
   )
 }
 
+const Container = styled.div`
+  @media screen and (max-width: 1100px) {
+    display: none;
+  }
+`
+
 const BigTitle = styled.div`
-  width: 1123px;
+  width: 100%;
   height: 112px;
   background: #313131;
   border-radius: 11px;
@@ -152,6 +158,7 @@ const BigTitle = styled.div`
 
 const TableContainer = styled.div`
   width: 1123px;
+  overflow-x: auto;
   background: #313131;
   border-radius: 11px;
   color: white;

@@ -300,6 +300,9 @@ const Switch = styled.div`
   p {
     margin: 0 4px 2px 0;
   }
+  @media screen and (max-width: 1100px) {
+    font-size: 10px;
+  }
 `
 
 export default AccountModule

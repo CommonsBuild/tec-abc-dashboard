@@ -442,6 +442,9 @@ const Right = styled.div`
   background: #191919;
   border-radius: 11px;
   padding: 45px 0 0 0;
+  @media screen and (max-width: 1100px) {
+    display: none;
+  }
 `
 const Chart = styled.div`
   flex-direction: column;

@@ -11,6 +11,9 @@ function Item({ title, content }) {
         display: flex;
         flex-direction: column;
         color: white;
+        @media screen and (max-width: 1100px) {
+          margin: 20px 0 0 0;
+        }
       `}
     >
       <p>{title}</p>

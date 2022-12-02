@@ -17,6 +17,9 @@ function NavBar({ logoMode }) {
         justify-content: space-between;
         align-items: center;
         padding: 16px 40px 0 40px;
+        @media screen and (max-width: 1100px) {
+          flex-direction: column;
+        }
       `}
     >
       <Logo mode={logoMode} />

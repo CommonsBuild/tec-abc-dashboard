@@ -296,7 +296,7 @@ function Docs() {
               color: #a0a8c2;
             }
           }
-          @media screen and (max-width: 1024px) {
+          @media screen and (max-width: 1100px) {
             position: relative;
             bottom: -32px;
             left: 0px;
@@ -321,7 +321,7 @@ function Docs() {
               color: #d2f67b;
             }
           }
-          @media screen and (max-width: 1024px) {
+          @media screen and (max-width: 1100px) {
             position: relative;
             bottom: -32px;
           }
@@ -366,7 +366,7 @@ const HowToGetButton = styled.button`
   padding: 10px 10px;
   margin: 0px 0px 0px 5px;
   opacity: 0.5;
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 1100px) {
     height: 40px;
   }
 `

@@ -49,6 +49,10 @@ const Box = styled.div`
   width: 1123px;
   height: 495px;
   justify-content: center;
+  @media screen and (max-width: 1100px) {
+    width: 1000px;
+    margin: 0;
+  }
 `
 
 const Left = styled.div`
@@ -58,6 +62,9 @@ const Left = styled.div`
   background: #313131;
   border-radius: 11px 0px 0px 11px;
   padding: 71px 39px;
+  @media screen and (max-width: 1100px) {
+    border-radius: 11px;
+  }
 `
 const Right = styled.div`
   width: 70%;
@@ -65,6 +72,9 @@ const Right = styled.div`
   justify-content: center;
   background: #000000;
   border-radius: 0 11px 11px 0;
+  @media screen and (max-width: 1100px) {
+    display: none;
+  }
 `
 const DisplayContainer = styled.div`
   display: flex;

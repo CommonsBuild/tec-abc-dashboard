@@ -47,6 +47,10 @@ function MainCards() {
         flex-direction: row;
         gap: 30px;
         justify-content: center;
+        @media screen and (max-width: 1100px) {
+          flex-direction: column;
+          gap: 100px;
+        }
       `}
     >
       <Card
